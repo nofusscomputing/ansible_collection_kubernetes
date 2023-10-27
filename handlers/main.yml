@@ -1,0 +1,29 @@
+---
+- name: "restart ContainerD"
+  service:
+    name: containerd
+    state: restarted
+  # when: opensshd_installed is defined
+  when: >
+    containerd_config.changed | default(false) | bool
+      and
+    containerd_installed.rc | default(1) | int == 0
+      and
+    kubernetes_type == 'k8s'
+  tags:
+    - configure
+    - install
+
+
+- name: "Apply Firewall Rules"
+  ansible.builtin.shell: |
+    /sbin/iptables-restore < /etc/iptables-kubernetes.rules
+  changed_when: false
+  listen: kubernetes_firewall_rules
+  # when: "ansible_os_family == 'Debian' and iptables_installed.rc == 0"
+
+- name: Restart Kubernetes
+  ansible.builtin.service:
+    name: "{% if kubernetes_type == 'k3s' %}k3s{% else %}kubelet{% endif %}"
+    state: restarted
+  listen: kubernetes_restart
