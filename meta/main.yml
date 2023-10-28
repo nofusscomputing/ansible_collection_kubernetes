@@ -1,20 +1,24 @@
-  galaxy_info:
-    role_name: Kubernetes
-    author: No Fuss Computing
-    description: template role to install kubernetes on a host
+galaxy_info:
+  role_name: nfc_kubernetes
+  author: No Fuss Computing
+  description: template role to install and configure Kubernetes on a host
 
-    issue_tracker_url: https://gitlab.com/nofusscomputing/infrastructure/ansible-roles
+  issue_tracker_url: https://gitlab.com/nofusscomputing/projects/ansible/kubernetes
 
-    license: https://gitlab.com/nofusscomputing/infrastructure/ansible-roles/-/blob/master/LICENSE
+  license: https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/blob/master/LICENSE
 
-    min_ansible_version: 1.2
+  min_ansible_version: '2.15'
 
-    platforms:
-      - name: Debian
-        versions:
-        - 11
+  platforms:
+    - name: Debian
+      versions:
+        - bullseye
+    - name: Ubuntu
+      versions:
+        - 21
 
-    galaxy_tags: 
-      - kubernetes
-      - k8s
-
+  galaxy_tags:
+    - k3s
+    - k8s
+    - kubernetes
+    - container

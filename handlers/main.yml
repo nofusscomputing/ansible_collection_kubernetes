@@ -3,7 +3,6 @@
   service:
     name: containerd
     state: restarted
-  # when: opensshd_installed is defined
   when: >
     containerd_config.changed | default(false) | bool
       and
@@ -14,13 +13,6 @@
     - configure
     - install
 
-
-- name: "Apply Firewall Rules"
-  ansible.builtin.shell: |
-    /sbin/iptables-restore < /etc/iptables-kubernetes.rules
-  changed_when: false
-  listen: kubernetes_firewall_rules
-  # when: "ansible_os_family == 'Debian' and iptables_installed.rc == 0"
 
 - name: Restart Kubernetes
   ansible.builtin.service:

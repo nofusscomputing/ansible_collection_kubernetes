@@ -196,10 +196,10 @@
 #     ipv6: true
 
 
-# # - name: Set IPTables to legacy mode
-# #   ansible.builtin.command:
-# #     cmd: update-alternatives --set iptables /usr/sbin/iptables-legacy
-# #   changed_when: false
+- name: Set IPTables to legacy mode
+  ansible.builtin.command:
+    cmd: update-alternatives --set iptables /usr/sbin/iptables-legacy
+  changed_when: false
 
 
 # - name: Server install K3s
