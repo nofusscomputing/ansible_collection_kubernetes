@@ -75,17 +75,17 @@
         url: "https://github.com/k3s-io/k3s/releases/download/v{{ KubernetesVersion + KubernetesVersion_k3s_prefix | urlencode }}/k3s"
 
 
-# - name: "[TRACE] Downloaded File SHA256"
-#   ansible.builtin.set_fact:
-#     hash_sha256_k3s_downloaded_binary: "{{ lookup('ansible.builtin.file', '/tmp/k3s') | hash('sha256') | string }}"
-#   delegate_to: localhost
+- name: "[TRACE] Downloaded File SHA256"
+  ansible.builtin.set_fact:
+    hash_sha256_k3s_downloaded_binary: "{{ lookup('ansible.builtin.file', '/tmp/k3s') | hash('sha256') | string }}"
+  delegate_to: localhost
 
 
-# - name: Existing k3s File hash
-#   ansible.builtin.stat:
-#     checksum_algorithm: sha256
-#     name: /usr/local/bin/k3s
-#   register: hash_sha256_k3s_existing_binary
+- name: Existing k3s File hash
+  ansible.builtin.stat:
+    checksum_algorithm: sha256
+    name: /usr/local/bin/k3s
+  register: hash_sha256_k3s_existing_binary
 
 
 - name: Copy K3s binary to Host
