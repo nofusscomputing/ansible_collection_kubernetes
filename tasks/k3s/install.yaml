@@ -115,6 +115,8 @@
     owner: root
     group: root
   loop: "{{ k3s.files }}"
+  when: >
+    kubernetes_config.cluster.prime.name == inventory_hostname
 
 
 - name: Copy Intial required templates
@@ -131,6 +133,8 @@
       - src: k3s-config.yaml.j2
         dest: /etc/rancher/k3s/config.yaml
         notify: kubernetes_restart
+  when: >
+    kubernetes_config.cluster.prime.name == inventory_hostname
 
 # - name: Templates IPv6
 #   ansible.builtin.template:
