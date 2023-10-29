@@ -23,6 +23,8 @@ This role deploys a K3s cluster. In addition it has the following features:
 
 - _[ToDo-#2](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/issues/2)_ Multi-node Deployment
 
+- OpenID Connect SSO Authentication
+
 - [Basic RBAC `ClusterRoles` and Bindings](rbac.md)
 
 - _[ToDo-#5](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/issues/5)_ Restore backup on fresh install of a cluster
