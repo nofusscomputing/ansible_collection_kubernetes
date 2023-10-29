@@ -16,15 +16,17 @@
   when: >
     install_kubernetes | default(true) | bool
       and
-    not kubernetes_installed | default(false) | bool
+    kubernetes_installed | default(false) | bool
 
 
 - name: Wireguard Cluster Encryption
   ansible.builtin.include_tasks:
-    file: k3s/configure.yaml
+    file: k3s/wireguard.yaml
   when: >
     install_kubernetes | default(true) | bool
       and
-    not kubernetes_installed | default(false) | bool
+    kubernetes_installed | default(false) | bool
       and
     not kubernetes_installed_encryption | default(false) | bool
+      and
+    kubernetes_config.cluster.networking.encrypt | default(false) | bool

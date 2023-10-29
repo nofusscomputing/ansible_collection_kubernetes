@@ -6,8 +6,8 @@
     update_cache: false
   when: >
     ansible_os_family == 'Debian'
-      and
-    kubernetes.networking.encrypt | default(false) | bool
+  #    and
+  #  kubernetes.networking.encrypt | default(false) | bool
 
 
 - name: Enable Cluster Encryption
@@ -15,10 +15,6 @@
     cmd: kubectl patch felixconfiguration default --type='merge' -p '{"spec":{"wireguardEnabled":true,"wireguardEnabledV6":true}}'
   changed_when: false
   when: >
-    ansible_os_family == 'Debian'
-      and
-    kubernetes.networking.encrypt | default(false) | bool
-      and
     kubernetes_config.cluster.prime.name == inventory_hostname
 
 - name: Set Kubernetes Encryption Final Install Fact
