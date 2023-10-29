@@ -28,6 +28,25 @@ This role deploys a K3s cluster. In addition it has the following features:
 - _[ToDo-#5](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/issues/5)_ Restore backup on fresh install of a cluster
 
 
+## Role Workflow
+
+The roles workflow is as follows
+
+1. Download both install script and k3s binary to ansible controller
+
+1. copy install script and k3s binary to host
+
+1. Create required config files needed for installation
+
+1. _(kubernetes prime only)_ Add install required config files
+
+1. Install kubernetes
+
+1. Configure Kubernetes
+
+If the playbook is setup as per [our recommendation](ansible.md) step 2 onwards is first done on master nodes then worker nodes.
+
+
 ## Default Variables
 
 
