@@ -37,6 +37,8 @@ nav:
 
         - projects/ansible/roles/kubernetes/index.md
 
+        - projects/ansible/roles/kubernetes/ansible.md
+
         - projects/ansible/roles/kubernetes/firewall.md
 
         - projects/ansible/roles/kubernetes/rbac.md
