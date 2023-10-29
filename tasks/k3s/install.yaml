@@ -117,6 +117,21 @@
   loop: "{{ k3s.files }}"
 
 
+- name: Copy Intial required templates
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    mode: '700'
+    force: true
+  notify: "{{ item.notify | default(omit) }}"
+  loop: "{{ templates_to_apply }}"
+  vars:
+    templates_to_apply:
+      - src: k3s-config.yaml.j2
+        dest: /etc/rancher/k3s/config.yaml
+        notify: kubernetes_restart
+
 # - name: Templates IPv6
 #   ansible.builtin.template:
 #     src: iptables-kubernetes.rules.j2

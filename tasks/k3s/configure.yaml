@@ -57,17 +57,18 @@
     templates_to_apply:
       - src: "calico.yaml.j2"
         dest: /var/lib/rancher/k3s/server/manifests/calico.yaml
+
       - src: kubernetes-manifest-rbac.yaml.j2
         dest: /var/lib/rancher/k3s/server/manifests/rbac-authorization-common.yaml
-      # - src: firewall-kubernetes.j2
-      #   dest: "/etc/network/if-up.d/firewall-kubernetes"
 
       - src: iptables-kubernetes.rules.j2
         dest: "/etc/iptables.rules.d/iptables-kubernetes.rules"
         notify: firewall_reloader
+
       - src: k3s-registries.yaml.j2
         dest: /etc/rancher/k3s/registries.yaml
         notify: kubernetes_restart
+
       - src: k3s-config.yaml.j2
         dest: /etc/rancher/k3s/config.yaml
         notify: kubernetes_restart
