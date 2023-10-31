@@ -46,9 +46,11 @@ The roles workflow is as follows
 
 1. Create required config files needed for installation
 
-1. _(kubernetes prime only)_ Add install required config files
+1. _(kubernetes prime master only)_ Add install required config files
 
 1. Install kubernetes
+
+1. _(kubernetes prime master only)_ Wait for kubernetes to be ready. Playbook is paused until `true`
 
 1. Configure Kubernetes
 
