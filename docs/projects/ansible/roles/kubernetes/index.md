@@ -15,7 +15,13 @@ This role deploys a K3s cluster. In addition it has the following features:
 
 - CNI Setup
 
-- Configurable Container Registries
+- Configurable:
+
+    - Container Registries
+
+    - etcd snapshot cron schedule
+
+    - etcd snapshot retention
 
 - _[ToDo-#3](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/issues/3)_ Encryption between nodes (Wireguard)
 
