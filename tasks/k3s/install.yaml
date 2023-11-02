@@ -162,17 +162,10 @@
 - name: Server install K3s
   ansible.builtin.shell:
     cmd: |
-      # INSTALL_K3S_SKIP_DOWNLOAD=true \
-      # INSTALL_K3S_VERSION="v{{ KubernetesVersion }}{{ KubernetesVersion_k3s_prefix }}" \
-      # /tmp/install.sh
       curl -sfL https://get.k3s.io | \
-      INSTALL_K3S_VERSION="v1.26.9+k3s1" \
+      INSTALL_K3S_VERSION="v{{ KubernetesVersion }}{{ KubernetesVersion_k3s_prefix }}" \
       sh -
   failed_when: false
-  # when: >
-  #   k3s_installed.rc | int == 1
-  #     and
-  #   Kubernetes_Master | default(false)
   when: Kubernetes_Master | default(false) | bool
 
 
