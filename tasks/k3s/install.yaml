@@ -176,7 +176,12 @@
   ansible.builtin.shell:
     cmd: |
       set -o pipefail
-      if [ `which jq` ]; then echo $(kubectl get no $(hostname) -o json | jq .status.conditions[4].status | tr -d '"'); else echo jq command not found; exit 127; fi
+      if [ `which jq` ]; then
+        echo $(kubectl get no $(hostname) -o json | jq .status.conditions[4].status | tr -d '"');
+      else
+        echo jq command not found;
+        exit 127;
+      fi
     executable: /bin/bash
   register: kubernetes_ready_check
   retries: 30
