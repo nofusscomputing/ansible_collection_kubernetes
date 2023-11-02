@@ -159,31 +159,20 @@
   changed_when: false
 
 
-- name: Server install K3s
-  ansible.builtin.shell:
-    cmd: |
-      curl -sfL https://get.k3s.io | \
-      INSTALL_K3S_VERSION="v{{ KubernetesVersion }}{{ KubernetesVersion_k3s_prefix }}" \
-      sh -
-  failed_when: false
-  when: Kubernetes_Master | default(false) | bool
-
-
-- name: Agent install K3s
+- name: Install K3s (prime master)
   ansible.builtin.shell:
     cmd: |
       INSTALL_K3S_SKIP_DOWNLOAD=true \
       INSTALL_K3S_VERSION="v{{ KubernetesVersion }}{{ KubernetesVersion_k3s_prefix }}" \
-      K3S_URL=https://{{ hostvars[kubernetes_config.cluster.prime.name].ansible_host }}:6443 \
-      K3S_TOKEN={{ node_token }} \
       /tmp/install.sh
-  when: >
-    k3s_installed.rc | int == 1
-      and
-    not Kubernetes_Master | default(false) | bool
+      # curl -sfL https://get.k3s.io | \
+      # INSTALL_K3S_VERSION="v{{ KubernetesVersion }}{{ KubernetesVersion_k3s_prefix }}" \
+      # sh -
+  changed_when: false
+  when: kubernetes_config.cluster.prime.name == inventory_hostname
 
 
-- name: Wait for kubernets to be ready
+- name: Wait for kubernetes to be ready
   ansible.builtin.shell:
     cmd: |
       set -o pipefail
