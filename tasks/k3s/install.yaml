@@ -1,4 +1,11 @@
 ---
+- name: Wireguard Cluster Encryption
+  ansible.builtin.include_tasks:
+    file: k3s/wireguard.yaml
+  when: >
+    not kubernetes_installed_encryption | default(false) | bool
+
+
 - name: Install Software
   ansible.builtin.include_role:
     name: nfc_common
@@ -8,6 +15,7 @@
       - name: curl
       - name: iptables
       - name: jq
+      - name: wireguard
 
 
 - name: Create Required directories
@@ -169,9 +177,6 @@
       INSTALL_K3S_SKIP_DOWNLOAD=true \
       INSTALL_K3S_VERSION="v{{ KubernetesVersion }}{{ KubernetesVersion_k3s_prefix }}" \
       /tmp/install.sh
-      # curl -sfL https://get.k3s.io | \
-      # INSTALL_K3S_VERSION="v{{ KubernetesVersion }}{{ KubernetesVersion_k3s_prefix }}" \
-      # sh -
   changed_when: false
   when: kubernetes_config.cluster.prime.name == inventory_hostname
 
@@ -198,6 +203,16 @@
     kubernetes_ready_check.rc != 0
   changed_when: false
   failed_when: kubernetes_ready_check.rc != 0
+
+
+- name: Enable Cluster Encryption
+  ansible.builtin.command:
+    cmd: kubectl patch felixconfiguration default --type='merge' -p '{"spec":{"wireguardEnabled":true,"wireguardEnabledV6":true}}'
+  changed_when: false
+  when: >
+    kubernetes_config.cluster.prime.name == inventory_hostname
+      and
+    kubernetes.networking.encrypt | default(false) | bool
 
 
 - name: Fetch Join Token
