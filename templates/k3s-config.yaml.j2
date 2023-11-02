@@ -8,7 +8,7 @@
 
 flannel-backend: none
 cluster-cidr: "{{ KubernetesPodSubnet }}"
-cluster-init: true
+{% if Kubernetes_Master | default(false) %}cluster-init: true{% endif%}
 {% if not Kubernetes_Prime | default(false) | bool -%}server: https://{{ hostvars[kubernetes_config.cluster.prime.name].ansible_host }}:6443{% endif %}
 service-cidr: "{{ KubernetesServiceSubnet }}"
 disable-network-policy: true
