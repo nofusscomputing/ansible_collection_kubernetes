@@ -18,16 +18,6 @@ kubernetes_etcd_snapshot_retention: 5
 
 # host_external_ip: ''                                     # Optional, String. External IP Address for host.
 
-# Optional, Dict. Used to configure Kubernetes with OIDC Authentication.
-# kubernetes_oidc:
-#   enabled: true                                          # Mandatory, boolen. speaks for itself.
-#   issuer_url: https://domainname.com/realms/realm-name   # Mandatory, String. URL of OIDC Provider
-#   client_id: kubernetes-test                             # Mandatory, string. OIDC Client ID
-#   username_claim: preferred_username                     # Mandatory, String. Claim name containing username.
-#   username_prefix: oidc                                  # Optional, String. What to prefix to username
-#   groups_claim: roles                                    # Mandatory, String. Claim name containing groups
-#   groups_prefix: ''                                      # Optional, String. string to append to groups
-
 kubernetes_type: k8s                                       # Mandatory, String. choice K8s | k3s
 
 
@@ -105,3 +95,12 @@ k3s:
 #   node_token: !vault |
 #     $ANSIBLE_VAULT;1.2;AES256;kubernetes/cluster/production
 #     {rest_of encrypted key}
+#  oidc:                                                    # Used to configure Kubernetes with OIDC Authentication.
+#    enabled: true                                          # Mandatory, boolen. speaks for itself.
+#    issuer_url: https://domainname.com/realms/realm-name   # Mandatory, String. URL of OIDC Provider
+#    client_id: kubernetes-test                             # Mandatory, string. OIDC Client ID
+#    username_claim: preferred_username                     # Mandatory, String. Claim name containing username.
+#    username_prefix: oidc                                  # Optional, String. What to prefix to username
+#    groups_claim: roles                                    # Mandatory, String. Claim name containing groups
+#    groups_prefix: ''                                      # Optional, String. string to append to groups
+

@@ -19,13 +19,13 @@ kube-apiserver-arg:
   - audit-log-path=/var/lib/rancher/k3s/server/logs/audit.log
   - audit-policy-file=/var/lib/rancher/k3s/server/audit.yaml
   # - admission-control-config-file=/var/lib/rancher/k3s/server/psa.yaml
-  {% if kubernetes_oidc.enabled | default(false) | bool -%}
-  - oidc-issuer-url={{ kubernetes_oidc.issuer_url }}
-  - oidc-client-id={{ kubernetes_oidc.client_id }}
-  - oidc-username-claim={{ kubernetes_oidc.username_claim }}
-{% if kubernetes_oidc.oidc_username_prefix | default('') != '' -%}  - oidc-username-prefix={{ kubernetes_oidc.oidc_username_prefix }}{% endif %}
-  - oidc-groups-claim={{ kubernetes_oidc.groups_claim }}
-{% if kubernetes_oidc.groups_prefix | default('') != '' %}  - oidc-groups-prefix={{ kubernetes_oidc.groups_prefix }}{% endif %}
+  {% if kubernetes_config.cluster.oidc.enabled | default(false) | bool -%}
+  - oidc-issuer-url={{ kubernetes_config.cluster.oidc.issuer_url }}
+  - oidc-client-id={{ kubernetes_config.cluster.oidc.client_id }}
+  - oidc-username-claim={{ kubernetes_config.cluster.oidc.username_claim }}
+{% if kubernetes_config.cluster.oidc.oidc_username_prefix | default('') != '' -%}  - oidc-username-prefix={{ kubernetes_config.cluster.oidc.oidc_username_prefix }}{% endif %}
+  - oidc-groups-claim={{ kubernetes_config.cluster.oidc.groups_claim }}
+{% if kubernetes_config.cluster.oidc.groups_prefix | default('') != '' %}  - oidc-groups-prefix={{ kubernetes_config.cluster.oidc.groups_prefix }}{% endif %}
 {% endif %}
 {% endif %}
 {% if host_external_ip | default('') %} node-external-ip: "{{ host_external_ip }}"{% endif %}

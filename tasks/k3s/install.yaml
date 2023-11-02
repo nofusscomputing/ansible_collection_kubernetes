@@ -1,11 +1,4 @@
 ---
-- name: Wireguard Cluster Encryption
-  ansible.builtin.include_tasks:
-    file: k3s/wireguard.yaml
-  when: >
-    not kubernetes_installed_encryption | default(false) | bool
-
-
 - name: Install Software
   ansible.builtin.include_role:
     name: nfc_common
