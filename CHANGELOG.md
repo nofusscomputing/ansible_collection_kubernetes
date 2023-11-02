@@ -1,3 +1,29 @@
+## 0.2.0rc0 (2023-11-02)
+
+### Bug Fixes
+
+- **firewall**: [9c420475](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/9c4204751e00c6d8a36c0fcb1ff66f0a87ba574e) - use correct chain name [ [!5](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/5) [#2](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/issues/2) ]
+- **firewall**: [ba59dd30](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/ba59dd305728b15801aca3aef81ea8aa35e5d402) - correct rules so that kubernetes hosts are added to firewall allowed hosts [ [!5](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/5) [#2](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/issues/2) ]
+- **wireguard**: [4a9d9839](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/4a9d98394e3fd327a0f681e42b5415e25520cff4) - install before k3s [ [!5](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/5) ]
+- **templates**: [89b65732](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/89b65732478883a5ccc29c9100c30840bf08d55e) - add clause to filter for prime master only [ [!5](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/5) ]
+- **install**: [b77cc6a8](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/b77cc6a8e902739f43519d4e9a0c0dcfca0cc30f) - install prime then wait till ready before install other nodes [ [!5](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/5) ]
+- **install**: [26f1f2ef](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/26f1f2efe63b47f7ab569f99aa0c1b5f28ff461b) - server install to use version variables [ [!5](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/5) ]
+- **configure**: [db515d2c](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/db515d2c1d921950c034911fad6622f969232895) - move required config files to install portion [ [!5](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/5) ]
+- **config**: [1b62a666](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/1b62a6663285b6c62323ca387ba176cc9d7eff74) - cluster-init only required for master nodes [ [!5](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/5) ]
+
+### Code Refactor
+
+- [4d9f9dcd](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/4d9f9dcdff5d07bb9f0722ddc22ff061ffa24f20) - use kubernetes_config for cluster config [ [!5](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/5) ]
+- **template**: [50f48ab5](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/50f48ab5a1a5983ed7465fefda7119df5d4fff96) - config.yaml rearranged orderd, and updated for kube role [ [!5](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/5) ]
+- **install**: [4465bcd2](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/4465bcd2c4f4a94cacd0f35025d63f4f858ee58d) - clean wait for k3s to be ready [ [!5](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/5) ]
+
+### Features
+
+- **install**: [c7907bf5](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/c7907bf585d182b5e68d241428dd69d7c1af1be7) - install additional master nodes [ [!5](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/5) [#2](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/issues/2) ]
+- **install**: [fd547a4c](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/fd547a4c0fbfa34fca6ec6860d294c1713594e41) - install worker nodes [ [!5](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/5) [#2](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/issues/2) ]
+- **install**: [76e48fd9](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/76e48fd965b9113d7aa69679524bc119f45db6ac) - wait for cluster to be ready before continuing [ [!4](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/4) ]
+- **config**: [abc01ce4](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/abc01ce48cbd586dfec067b3fcdbca0d204843d4) - enable configering etc cron and retention [ [!4](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/4) ]
+
 ## 0.1.0 (2023-10-29)
 
 ### Bug Fixes
