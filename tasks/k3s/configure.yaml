@@ -9,6 +9,7 @@
     owner: root
     group: root
   loop: "{{ k3s.files }}"
+  when: item.when | default(false) | bool
 
 
 - name: Copy Templates
@@ -20,13 +21,14 @@
     force: true
   notify: "{{ item.notify | default(omit) }}"
   loop: "{{ templates_to_apply }}"
+  when: item.when | default(true) | bool
   vars:
     templates_to_apply:
 
       - src: kubernetes-manifest-rbac.yaml.j2
         dest: /var/lib/rancher/k3s/server/manifests/rbac-authorization-common.yaml
+        when: "{{ kubernetes_config.cluster.prime.name == inventory_hostname }}"
 
       - src: iptables-kubernetes.rules.j2
         dest: "/etc/iptables.rules.d/iptables-kubernetes.rules"
         notify: firewall_reloader
-

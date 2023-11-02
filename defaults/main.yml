@@ -69,6 +69,7 @@ k3s:
         kind: Policy
         rules:
         - level: Request
+      when: "{{ kubernetes_config.cluster.prime.name == inventory_hostname }}"
 
     - name: 90-kubelet.conf
       path: /etc/sysctl.d
@@ -100,6 +101,7 @@ k3s:
         #       usernames: []
         #       runtimeClasses: []
         #       namespaces: [kube-system]
+      when: "{{ kubernetes_config.cluster.prime.name == inventory_hostname }}"
 
 
 
