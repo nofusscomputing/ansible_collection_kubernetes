@@ -232,6 +232,22 @@
   no_log: true # Value is sensitive
 
 
+- name: Install K3s (master nodes)
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      INSTALL_K3S_EXEC="server" \
+      INSTALL_K3S_SKIP_DOWNLOAD=true \
+      INSTALL_K3S_VERSION="v{{ KubernetesVersion }}{{ KubernetesVersion_k3s_prefix }}" \
+      K3S_TOKEN="{{ k3s_join_token }}" \
+      /tmp/install.sh
+  changed_when: false
+  when: >
+    Kubernetes_Master | default(false) | bool
+      and
+    not kubernetes_config.cluster.prime.name == inventory_hostname
+
+
 - name: Install K3s (worker nodes)
   ansible.builtin.shell:
     cmd: |
