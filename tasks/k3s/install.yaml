@@ -134,6 +134,11 @@
       - src: k3s-config.yaml.j2
         dest: /etc/rancher/k3s/config.yaml
         notify: kubernetes_restart
+      - src: "calico.yaml.j2"
+        dest: /var/lib/rancher/k3s/server/manifests/calico.yaml
+      - src: k3s-registries.yaml.j2
+        dest: /etc/rancher/k3s/registries.yaml
+        notify: kubernetes_restart
   when: >
     kubernetes_config.cluster.prime.name == inventory_hostname
 
