@@ -64,6 +64,7 @@
     mode: "744"
   register: k3s_download_files
   delegate_to: localhost
+  run_once: true
   # no_log: true
   when: ansible_os_family == 'Debian'
   loop: "{{ download_files }}"
@@ -117,7 +118,8 @@
     group: root
   loop: "{{ k3s.files }}"
   when: >
-    kubernetes_config.cluster.prime.name == inventory_hostname
+    item.when | default(true) | bool
+  #   kubernetes_config.cluster.prime.name == inventory_hostname
 
 
 - name: Copy Intial required templates
@@ -129,6 +131,8 @@
     force: true
   notify: "{{ item.notify | default(omit) }}"
   loop: "{{ templates_to_apply }}"
+  when: >
+    item.when | default(true) | bool
   vars:
     templates_to_apply:
       - src: k3s-config.yaml.j2
@@ -136,11 +140,11 @@
         notify: kubernetes_restart
       - src: "calico.yaml.j2"
         dest: /var/lib/rancher/k3s/server/manifests/calico.yaml
+        when: "{{ kubernetes_config.cluster.prime.name == inventory_hostname }}"
       - src: k3s-registries.yaml.j2
         dest: /etc/rancher/k3s/registries.yaml
         notify: kubernetes_restart
-  when: >
-    kubernetes_config.cluster.prime.name == inventory_hostname
+
 
 # - name: Templates IPv6
 #   ansible.builtin.template:
@@ -172,7 +176,7 @@
   when: kubernetes_config.cluster.prime.name == inventory_hostname
 
 
-- name: Wait for kubernetes to be ready
+- name: Wait for kubernetes prime to be ready
   ansible.builtin.shell:
     cmd: |
       set -o pipefail
@@ -183,6 +187,8 @@
         exit 127;
       fi
     executable: /bin/bash
+  delegate_to: "{{ kubernetes_config.cluster.prime.name }}"
+  run_once: true
   register: kubernetes_ready_check
   retries: 30
   delay: 10
@@ -192,10 +198,43 @@
     kubernetes_ready_check.rc != 0
   changed_when: false
   failed_when: kubernetes_ready_check.rc != 0
+
+
+- name: Fetch Join Token
+  ansible.builtin.slurp:
+    src: /var/lib/rancher/k3s/server/token
+  delegate_to: "{{ kubernetes_config.cluster.prime.name }}"
+  run_once: true
+  register: k3s_join_token
+  no_log: true # Value is sensitive
+
+
+- name: Create Token fact
+  ansible.builtin.set_fact:
+    k3s_join_token: "{{ k3s_join_token.content | b64decode | replace('\n', '') }}"
+  delegate_to: "{{ kubernetes_config.cluster.prime.name }}"
+  run_once: true
+  no_log: true # Value is sensitive
+
+
+- name: Install K3s (worker nodes)
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      INSTALL_K3S_EXEC="agent" \
+      INSTALL_K3S_SKIP_DOWNLOAD=true \
+      INSTALL_K3S_VERSION="v{{ KubernetesVersion }}{{ KubernetesVersion_k3s_prefix }}" \
+      K3S_TOKEN="{{ k3s_join_token }}" \
+      K3S_URL="https://{{ hostvars[kubernetes_config.cluster.prime.name].ansible_host }}:6443" \
+      /tmp/install.sh -
+    executable: /bin/bash
+  changed_when: false
   when: >
-    kubernetes_config.cluster.prime.name == inventory_hostname
+    not Kubernetes_Master | default(false) | bool
 
 
 - name: Set Kubernetes Final Install Fact
   ansible.builtin.set_fact:
     kubernetes_installed: true
+    # Clear Token as no llonger required and due to being a sensitive value
+    k3s_join_token: null

@@ -21,7 +21,8 @@
     force: true
   notify: "{{ item.notify | default(omit) }}"
   loop: "{{ templates_to_apply }}"
-  when: item.when | default(true) | bool
+  when: >
+    item.when | default(true) | bool
   vars:
     templates_to_apply:
 
