@@ -6,16 +6,17 @@
 # Dont edit this file directly as it will be overwritten.
 #
 
-flannel-backend: none
-cluster-cidr: "{{ KubernetesPodSubnet }}"
-{% if Kubernetes_Master | default(false) %}cluster-init: true{% endif%}
-{% if not Kubernetes_Prime | default(false) | bool -%}server: https://{{ hostvars[kubernetes_config.cluster.prime.name].ansible_host }}:6443{% endif %}
-service-cidr: "{{ KubernetesServiceSubnet }}"
+{% if Kubernetes_Prime | default(false) | bool -%}cluster-cidr: "{{ KubernetesPodSubnet }}"{% endif %}
+{% if Kubernetes_Master | default(false) -%}cluster-init: true{% endif%}
 disable-network-policy: true
 disable:
   - traefik
+{% if Kubernetes_Master | default(false) -%}
 etcd-snapshot-retention: {{ kubernetes_etcd_snapshot_retention | int }}
 etcd-snapshot-schedule-cron: "{{ kubernetes_etcd_snapshot_cron_schedule }}"
+{% endif %}
+flannel-backend: none
+{% if Kubernetes_Master | default(false) -%}
 kube-apiserver-arg:
   - audit-log-path=/var/lib/rancher/k3s/server/logs/audit.log
   - audit-policy-file=/var/lib/rancher/k3s/server/audit.yaml
@@ -28,4 +29,9 @@ kube-apiserver-arg:
   - oidc-groups-claim={{ kubernetes_oidc.groups_claim }}
 {% if kubernetes_oidc.groups_prefix | default('') != '' %}  - oidc-groups-prefix={{ kubernetes_oidc.groups_prefix }}{% endif %}
 {% endif %}
+{% endif %}
 {% if host_external_ip | default('') %} node-external-ip: "{{ host_external_ip }}"{% endif %}
+server: https://{{ hostvars[kubernetes_config.cluster.prime.name].ansible_host }}:6443
+{% if not Kubernetes_Prime | default(false) | bool -%}
+service-cidr: "{{ KubernetesServiceSubnet }}"
+{% endif %}
