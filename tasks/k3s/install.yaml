@@ -187,6 +187,7 @@
       - src: k3s-registries.yaml.j2
         dest: /etc/rancher/k3s/registries.yaml
         notify: kubernetes_restart
+        when: "{{ (kubernetes_private_container_registry | default([])) | from_yaml | list | length > 0 }}"
 
 
 # - name: Templates IPv6
