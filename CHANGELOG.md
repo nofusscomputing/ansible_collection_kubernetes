@@ -1,3 +1,22 @@
+## 0.2.0rc1 (2023-11-06)
+
+### Bug Fixes
+
+- **config**: [f09737b2](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/f09737b21f1bac4d505207136e9505c83140b4cf) - typo in config template [ [!6](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/6) ]
+- **rbac**: [6ab17bdc](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/6ab17bdc3c660e704ce7319a21a517f38907a541) - authorization:namespace:owner ns owner not to remove cluster resources [ [!6](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/6) ]
+- **container_registries**: [9936cd44](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/9936cd449911a0e9612309690fbca82e8565c2b3) - these are optional, dont attempt to configure if non specified [ [!6](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/6) ]
+- **config**: [5278a499](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/5278a4996e0370bbe14ba08189879c19f6b1f983) - server attribute not required for prime master node [ [!6](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/6) ]
+
+### Documentaton / Guides
+
+- [0acc7a3c](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/0acc7a3cc2b93f94fc92839e34dec02cfe4d5ec2) - added note on config for system resources [ [!6](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/6) [#7](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/issues/7) ]
+
+### Features
+
+- **rbac**: [59f50d53](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/59f50d53df4e28ef114d734f652cb25d396a381d) - new cluster role and binding ingress-admin [ [!6](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/6) ]
+- **config**: [d2081284](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/d2081284d1d526a57a34082f5ad944dc12671750) - configurabl system reserved cpu,memory,storage [ [!6](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/6) ]
+- **install**: [42ac18e0](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/42ac18e05768e61f0d960fb3afe2482431bd5fce) - disable swap [ [!6](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/6) ]
+
 ## 0.2.0rc0 (2023-11-02)
 
 ### Bug Fixes
