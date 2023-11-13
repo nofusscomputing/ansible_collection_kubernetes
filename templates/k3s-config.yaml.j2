@@ -8,13 +8,15 @@
 
 {% if Kubernetes_Prime | default(false) | bool -%}
 cluster-cidr: "{{ KubernetesPodSubnet }}"
-cluster-domain: {% if 
-                      kubernetes_config.cluster.domain_name is defined
-                        and
-                      kubernetes_config.cluster.domain_name | default('') != ''
-                -%}
-                    {{ kubernetes_config.cluster.domain_name }}
-                {%- endif %}
+
+{% if 
+          kubernetes_config.cluster.domain_name is defined
+            and
+          kubernetes_config.cluster.domain_name | default('') != ''
+    -%}
+        cluster-domain: {{ kubernetes_config.cluster.domain_name }}
+    {%- endif %}
+
 {%- endif %}
 
 {% if Kubernetes_Master | default(false) -%}cluster-init: true
