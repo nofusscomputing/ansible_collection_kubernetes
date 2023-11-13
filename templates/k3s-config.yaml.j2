@@ -41,6 +41,17 @@ kubelet-arg:
   - system-reserved=cpu={{ kubelet_arg_system_reserved_cpu }},memory={{ kubelet_arg_system_reserved_memory }},ephemeral-storage={{ kubelet_arg_system_reserved_storage }}
 {% if host_external_ip | default('') %}node-external-ip: "{{ host_external_ip }}"{% endif %}
 
+{% if 
+  kubernetes_config.hosts[inventory_hostname].labels is defined
+    and
+  kubernetes_config.hosts[inventory_hostname].labels | default([]) | list | length > 0
+-%}
+node-label:
+{% for node_label in kubernetes_config.hosts[inventory_hostname].labels | dict2items %}
+  - {{ node_label.key }}={{ node_label.value }}
+{%- endfor %}
+{%- endif %}
+
 {% if not Kubernetes_Prime | default(false) | bool -%}
 server: https://{{ hostvars[kubernetes_config.cluster.prime.name].ansible_host }}:6443
 servicelb-namespace: {{ kubernetes_config.cluster.networking.service_load_balancer_namespace | default('kube-system') }}
