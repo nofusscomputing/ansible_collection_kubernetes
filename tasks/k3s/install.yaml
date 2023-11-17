@@ -100,7 +100,7 @@
     nfc_kubernetes_install_architectures: "{{ nfc_kubernetes_install_architectures | default({}) | combine({ansible_architecture: ''}) }}"
 
 
-- name: Download Install Script
+- name: Download Install Scripts
   ansible.builtin.uri:
     url: "{{ item.url }}"
     method: GET
@@ -121,6 +121,8 @@
     download_files:
       - dest: /tmp/install.sh
         url: https://get.k3s.io
+      - dest: /tmp/install_olm.sh
+        url: https://raw.githubusercontent.com/operator-framework/operator-lifecycle-manager/v{{ kubernetes_version_olm }}/scripts/install.sh
 
 
 - name: Download K3s Binary
@@ -176,13 +178,18 @@
     group: root
   when: hash_sha256_k3s_existing_binary.stat.checksum | default('0') != hash_sha256_k3s_downloaded_binary
 
-- name: Copy install script to Host
+- name: Copy install scripts to Host
   ansible.builtin.copy:
-    src: "/tmp/install.sh"
-    dest: "/tmp/install.sh"
+    src: "{{ item }}"
+    dest: "{{ item }}"
     mode: '755'
     owner: root
     group: root
+  loop: "{{ install_scripts }}"
+  vars:
+    install_scripts:
+      - "/tmp/install.sh"
+      - "/tmp/install_olm.sh"
   # when: hash_sha256_k3s_existing_binary.stat.checksum | default('0') != hash_sha256_k3s_downloaded_binary
 
 - name: Required Initial config files
@@ -274,6 +281,16 @@
   changed_when: false
   failed_when: kubernetes_ready_check.rc != 0
 
+
+- name: Install olm
+  ansible.builtin.shell:
+    cmd: |
+      /tmp/install_olm.sh v{{ kubernetes_version_olm }}
+  changed_when: false
+  when: >
+    kubernetes_config.cluster.prime.name == inventory_hostname
+      and
+    kubernetes_olm_install | default(true) | bool
 
 - name: Enable Cluster Encryption
   ansible.builtin.command:
