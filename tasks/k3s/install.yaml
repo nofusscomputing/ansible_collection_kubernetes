@@ -282,7 +282,7 @@
   when: >
     kubernetes_config.cluster.prime.name == inventory_hostname
       and
-    kubernetes.networking.encrypt | default(false) | bool
+    kubernetes_config.cluster.networking.encrypt | default(false) | bool
 
 
 - name: Fetch Join Token
