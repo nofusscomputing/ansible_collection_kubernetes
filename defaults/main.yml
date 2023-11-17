@@ -43,7 +43,7 @@ k3s:
         kind: Policy
         rules:
         - level: Request
-      when: "{{ kubernetes_config.cluster.prime.name == inventory_hostname }}"
+      when: "{{ Kubernetes_Master | default(false) }}"
 
     - name: 90-kubelet.conf
       path: /etc/sysctl.d

@@ -6,8 +6,7 @@
 # Dont edit this file directly as it will be overwritten.
 #
 
-{% if Kubernetes_Prime | default(false) | bool -%}
-cluster-cidr: "{{ KubernetesPodSubnet }}"
+{% if Kubernetes_Master | default(false) -%}cluster-cidr: "{{ KubernetesPodSubnet }}"
 
 {% if 
           kubernetes_config.cluster.domain_name is defined
@@ -17,9 +16,7 @@ cluster-cidr: "{{ KubernetesPodSubnet }}"
         cluster-domain: {{ kubernetes_config.cluster.domain_name }}
     {%- endif %}
 
-{%- endif %}
-
-{% if Kubernetes_Master | default(false) -%}cluster-init: true
+cluster-init: true
 disable-network-policy: true
 disable:
   - traefik
@@ -59,10 +56,7 @@ node-label: {%- for node_label in kubernetes_config.hosts[inventory_hostname].la
 server: https://{{ hostvars[kubernetes_config.cluster.prime.name].ansible_host }}:6443
 {%- endif %}
 
-{% if kubernetes_config.cluster.prime.name == inventory_hostname -%}
-servicelb-namespace: {{ kubernetes_config.cluster.networking.service_load_balancer_namespace | default('kube-system') }}
-{% endif %}
-
 {% if Kubernetes_Master | default(false) | bool -%}
+servicelb-namespace: {{ kubernetes_config.cluster.networking.service_load_balancer_namespace | default('kube-system') }}
 service-cidr: "{{ KubernetesServiceSubnet }}"
 {% endif %}
