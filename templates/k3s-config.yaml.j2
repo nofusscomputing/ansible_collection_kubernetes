@@ -48,9 +48,9 @@ kubelet-arg:
     and
   kubernetes_config.hosts[inventory_hostname].labels | default([]) | list | length > 0
 -%}
-node-label:
-{% for node_label in kubernetes_config.hosts[inventory_hostname].labels | dict2items %}
+node-label: {%- for node_label in kubernetes_config.hosts[inventory_hostname].labels | dict2items +%}
   - {{ node_label.key }}={{ node_label.value }}
+
 {%- endfor %}
 {%- endif %}
 
