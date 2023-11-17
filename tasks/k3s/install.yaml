@@ -287,6 +287,11 @@
     cmd: |
       /tmp/install_olm.sh v{{ kubernetes_version_olm }}
   changed_when: false
+  failed_when: >
+    'already installed' not in install_olm.stdout
+      and
+    install_olm.rc == 1
+  register: install_olm
   when: >
     kubernetes_config.cluster.prime.name == inventory_hostname
       and
