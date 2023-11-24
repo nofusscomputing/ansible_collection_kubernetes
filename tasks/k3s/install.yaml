@@ -135,7 +135,7 @@
       -arm64
       {%- endif %}
     method: GET
-    return_content: true
+    return_content: false
     status_code:
       - 200
       - 304
