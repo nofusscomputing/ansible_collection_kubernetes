@@ -45,12 +45,11 @@ kubelet-arg:
 {% if 
   groups[kubernetes_config.cluster.group_name] | default([]) | list | length > 0
 -%}
-server: {% for cluster_node in groups[kubernetes_config.cluster.group_name] -%}
-
-    {%- if
+server: {% for cluster_node in groups[kubernetes_config.cluster.group_name] +%}
+  {% if
       cluster_node in groups['kubernetes_master'] 
     -%}
-        https://
+        - https://
         {%- if hostvars[cluster_node].host_external_ip is defined -%}
 
           {{ hostvars[cluster_node].host_external_ip }}
@@ -61,8 +60,6 @@ server: {% for cluster_node in groups[kubernetes_config.cluster.group_name] -%}
 
         {%- endif -%}
         :6443
-        {%- if loop.index < (groups['kubernetes_master'] | list | length - 2) -%},{%- endif -%}
-    
     {%- endif -%}
 
   {%- endfor %}
