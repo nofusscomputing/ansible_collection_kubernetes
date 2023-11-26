@@ -72,9 +72,4 @@ server: {% for cluster_node in groups[kubernetes_config.cluster.group_name] -%}
 {% if Kubernetes_Master | default(false) | bool -%}
 servicelb-namespace: {{ kubernetes_config.cluster.networking.service_load_balancer_namespace | default('kube-system') }}
 service-cidr: "{{ KubernetesServiceSubnet }}"
-agent-token: {{ k3s_join_token }}
-{% endif %}
-
-{% if not Kubernetes_Master | default(false) | bool -%}
-token: {{ k3s_join_token }}
 {% endif %}
