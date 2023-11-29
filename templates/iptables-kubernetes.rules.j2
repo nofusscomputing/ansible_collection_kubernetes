@@ -166,6 +166,12 @@
 
 {%- if Kubernetes_Master | default(false) | bool -%}
 
+  {%- if host_external_ip is defined -%}
+
+    {%- set data.firewall_rules = data.firewall_rules + ['-I kubernetes-api -s ' + host_external_ip + ' -m comment --comment "hosts configured external IP" -j ACCEPT'] -%}
+
+  {%- endif -%}
+
   {%- for api_client in kubernetes_config.cluster.access | default([]) -%}
 
     {%- if api_client is regex('^[a-z]')  and ':' not in api_client -%} {#- Convert DNs name to IP Address -#}
