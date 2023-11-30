@@ -26,7 +26,7 @@ etcd-snapshot-schedule-cron: "{{ kubernetes_etcd_snapshot_cron_schedule }}"
 flannel-backend: none
 kube-apiserver-arg:
   - audit-log-path=/var/lib/rancher/k3s/server/logs/audit.log
-  - audit-log-maxbackup={{ kube_apiserver_arg_audit_log_maxbackup }}
+  - audit-log-maxage={{ kube_apiserver_arg_audit_log_maxage }}
   - audit-policy-file=/var/lib/rancher/k3s/server/audit.yaml
   # - admission-control-config-file=/var/lib/rancher/k3s/server/psa.yaml
   {% if kubernetes_config.cluster.oidc.enabled | default(false) | bool -%}
