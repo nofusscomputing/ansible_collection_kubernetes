@@ -310,7 +310,7 @@
   when: >
     kubernetes_config.cluster.prime.name == inventory_hostname
       and
-    kubernetes_olm_install | default(true) | bool
+    kubernetes_olm_install | default(false) | bool
 
 - name: Enable Cluster Encryption
   ansible.builtin.command:
