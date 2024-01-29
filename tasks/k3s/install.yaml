@@ -83,6 +83,26 @@
    # On change reboot
 
 
+- name: Network Manager Setup
+  ansible.builtin.copy:
+    content: |-
+      #
+      # K3s Configuration for Network Manager
+      #
+      # Managed By ansible/role/nfc_kubernetes
+      #
+      # Dont edit this file directly as it will be overwritten.
+      #
+      [keyfile]
+      unmanaged-devices=interface-name:cali*;interface-name:tunl*;interface-name:vxlan.calico;interface-name:vxlan-v6.calico;interface-name:wireguard.cali;interface-name:wg-v6.cali
+    dest: /etc/NetworkManager/conf.d/calico.conf
+    mode: '770'
+    owner: root
+    group: root
+  become: true
+  diff: true
+
+
 - name: Check if K3s Installed
   ansible.builtin.shell:
     cmd: |
