@@ -1,0 +1,16 @@
+---
+
+apiVersion: crd.projectcalico.org/v1
+kind: IPPool
+metadata:
+  name: default-ipv4-ippool
+spec:
+  allowedUses:
+    - Workload
+    - Tunnel
+  blockSize: 26
+  cidr: {{ kubernetes_config.cluster.networking.podSubnet }}
+  ipipMode: Never
+  natOutgoing: true
+  nodeSelector: all()
+  vxlanMode: Always

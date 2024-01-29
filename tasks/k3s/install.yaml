@@ -243,7 +243,14 @@
         notify: kubernetes_restart
       - src: "calico.yaml.j2"
         dest: /var/lib/rancher/k3s/server/manifests/calico.yaml
-        when: "{{ kubernetes_config.cluster.prime.name == inventory_hostname }}"
+        when: >
+          {{ kubernetes_config.cluster.prime.name == inventory_hostname
+            and
+          (
+            'operator_migrate_calico' not in ansible_run_tags
+              and
+            'operator_calico' not in ansible_run_tags
+          ) }}
       - src: k3s-registries.yaml.j2
         dest: /etc/rancher/k3s/registries.yaml
         notify: kubernetes_restart
@@ -316,6 +323,23 @@
       and
     kubernetes_olm_install | default(false) | bool
 
+
+- name: Install Calico Operator
+  ansible.builtin.include_tasks:
+    file: migrate_to_operator.yaml
+    apply:
+      tags:
+        - always
+  when: >-
+    (
+      'operator_migrate_calico' in ansible_run_tags
+        or
+      'operator_calico' in ansible_run_tags
+    )
+      and
+    kubernetes_config.cluster.prime.name == inventory_hostname
+
+
 - name: Enable Cluster Encryption
   ansible.builtin.command:
     cmd: kubectl patch felixconfiguration default --type='merge' -p '{"spec":{"wireguardEnabled":true,"wireguardEnabledV6":true}}'
@@ -324,6 +348,12 @@
     kubernetes_config.cluster.prime.name == inventory_hostname
       and
     kubernetes_config.cluster.networking.encrypt | default(false) | bool
+      and
+    (
+      'operator_migrate_calico' not in ansible_run_tags
+        or
+      'operator_calico' not in ansible_run_tags
+    )
 
 
 - name: Fetch Join Token

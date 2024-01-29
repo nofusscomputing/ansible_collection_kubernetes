@@ -1,0 +1,44 @@
+---
+
+apiVersion: operator.tigera.io/v1
+kind: Installation
+metadata:
+  name: default
+spec:
+  calicoNetwork:
+    bgp: Disabled
+    containerIPForwarding: Enabled
+    hostPorts: Enabled
+    ipPools:
+    - blockSize: 26
+      cidr: {{ kubernetes_config.cluster.networking.podSubnet }}
+      disableBGPExport: false
+      encapsulation: VXLAN
+      natOutgoing: Enabled
+      nodeSelector: all()
+    linuxDataplane: Iptables
+    mtu: 0
+    multiInterfaceMode: None
+    nodeAddressAutodetectionV4:
+      kubernetes: NodeInternalIP
+  cni:
+    ipam:
+      type: Calico
+    type: Calico
+  componentResources:
+  - componentName: Node
+    resourceRequirements:
+      requests:
+        cpu: 250m
+  controlPlaneReplicas: 3
+  flexVolumePath: None
+  kubeletVolumePluginPath: None
+  nodeUpdateStrategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  nonPrivileged: Disabled
+  serviceCIDRs:
+    - {{ kubernetes_config.cluster.networking.ServiceSubnet }}
+  variant: Calico
