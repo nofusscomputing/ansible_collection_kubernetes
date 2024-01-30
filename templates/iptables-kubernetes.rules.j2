@@ -168,6 +168,13 @@
 
       {%- set data.firewall_rules = data.firewall_rules + ['-I kubernetes-calico-typha -s ' + kubernetes_host + ' -j ACCEPT'] -%}
 
+      {%- if nfc_kubernetes_enable_metallb | default(false) -%}
+
+        {%- set data.firewall_rules = data.firewall_rules + ['-I metallb-l2-tcp -s ' + kubernetes_host + ' -j ACCEPT'] -%}
+
+        {%- set data.firewall_rules = data.firewall_rules + ['-I metallb-l2-udp -s ' + kubernetes_host + ' -j ACCEPT'] -%}
+
+      {%- endif -%}
 
     {%- endif -%}
 

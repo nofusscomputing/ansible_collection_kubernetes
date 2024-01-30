@@ -47,6 +47,8 @@ This role deploys a K3s cluster. In addition it has the following features:
 
 - Installs OLM for operator subscriptions
 
+- Install MetalLB
+
 
 ## Role Workflow
 

@@ -16,8 +16,6 @@
   block:
 
 
-
-
     - name: Move Calico Manifest from addons directory
       ansible.builtin.command:
         cmd: mv /var/lib/rancher/k3s/server/manifests/calico.yaml /tmp/

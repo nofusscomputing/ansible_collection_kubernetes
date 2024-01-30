@@ -338,6 +338,25 @@
     kubernetes_config.cluster.prime.name == inventory_hostname
 
 
+- name: Install MetalLB Operator
+  ansible.builtin.include_tasks:
+    file: manifest_apply.yaml
+    apply:
+      tags:
+        - always
+  loop: "{{ manifests }}"
+  loop_control:
+    loop_var: manifest
+  vars:
+    manifests:
+      - name: MetalLB Operator
+        template: Deployment-manifest-MetalLB_Operator.yaml
+  when: >-
+    nfc_kubernetes_enable_metallb | default(false) | bool
+      and
+    kubernetes_config.cluster.prime.name == inventory_hostname
+
+
 - name: Wait for kubernetes prime to be ready
   ansible.builtin.shell:
     cmd: |

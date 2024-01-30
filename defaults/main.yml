@@ -13,6 +13,10 @@ nfc_kubernetes_tigera_operator_tag: v1.32.3               # Calico v3.27.0
 # EoF New Variables, EEoF Depreciated
 
 
+nfc_kubernetes_enable_metallb: false
+nfc_kubernetes_enable_servicelb: false
+
+
 ############################################################################################################
 #
 #                     Old Vars requiring refactoring
