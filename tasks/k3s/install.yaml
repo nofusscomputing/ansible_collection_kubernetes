@@ -1,4 +1,19 @@
 ---
+
+- name: Check for calico deployment manifest
+  ansible.builtin.stat:
+    name: /var/lib/rancher/k3s/server/manifests/calico.yaml
+  become: true
+  register: file_calico_yaml_metadata
+
+
+- name: Check for calico Operator deployment manifest
+  ansible.builtin.stat:
+    name: /var/lib/rancher/k3s/ansible/deployment-manifest-calico_operator.yaml
+  become: true
+  register: file_calico_operator_yaml_metadata
+
+
 - name: Install Software
   ansible.builtin.include_role:
     name: nfc_common
@@ -76,15 +91,23 @@
 
 - name: Add sysctl net.ipv4.ip_forward
   ansible.posix.sysctl:
-    name: net.ipv4.ip_forward
-    value: '1'
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
     sysctl_set: true
     state: present
     reload: true
-  notify: reboot_host
+  loop: "{{ settings }}"
+  notify: reboot_host    # On change reboot
+  vars:
+    settings:
+      - name: net.ipv4.ip_forward
+        value: '1'
+      - name: fs.inotify.max_user_watches
+        value: '524288'
+      - name: fs.inotify.max_user_instances
+        value: '512'
   when:
     - ansible_os_family == 'Debian'
-   # On change reboot
 
 
 - name: Network Manager Setup
@@ -209,6 +232,7 @@
     mode: '755'
     owner: root
     group: root
+  changed_when: false
   loop: "{{ install_scripts }}"
   vars:
     install_scripts:
@@ -250,13 +274,17 @@
       - src: "calico.yaml.j2"
         dest: /var/lib/rancher/k3s/server/manifests/calico.yaml
         when: >
-          {{ kubernetes_config.cluster.prime.name == inventory_hostname
-            and
-          (
-            'operator_migrate_calico' not in ansible_run_tags
+          {{
+            kubernetes_config.cluster.prime.name == inventory_hostname
               and
-            'operator_calico' not in ansible_run_tags
-          ) }}
+            (
+              not file_calico_operator_yaml_metadata.stat.exists
+                and
+              file_calico_yaml_metadata.stat.exists
+                and
+              k3s_installed.rc == 0
+            )
+          }}
       - src: k3s-registries.yaml.j2
         dest: /etc/rancher/k3s/registries.yaml
         notify: kubernetes_restart
@@ -298,9 +326,13 @@
         - always
   when: >-
     (
-      'operator_migrate_calico' in ansible_run_tags
+      (
+        'operator_migrate_calico' in ansible_run_tags
+          or
+        'operator_calico' in ansible_run_tags
+      )
         or
-      'operator_calico' in ansible_run_tags
+      not file_calico_yaml_metadata.stat.exists
     )
       and
     kubernetes_config.cluster.prime.name == inventory_hostname

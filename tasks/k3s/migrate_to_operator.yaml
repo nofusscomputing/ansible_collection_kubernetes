@@ -16,11 +16,6 @@
   block:
 
 
-    - name: Check for calico deployment manifest
-      ansible.builtin.stat:
-        name: /var/lib/rancher/k3s/server/manifests/calico.yaml
-      become: true
-      register: file_calico_yaml_metadata
 
 
     - name: Move Calico Manifest from addons directory
