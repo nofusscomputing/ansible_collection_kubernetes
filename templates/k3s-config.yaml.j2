@@ -47,8 +47,9 @@ node-name: {{ inventory_hostname }}
 
 {% if 
   groups[kubernetes_config.cluster.group_name] | default([]) | list | length > 0
--%}
-server: {% for cluster_node in groups[kubernetes_config.cluster.group_name] +%}
+-%}{% if k3s_installed.rc == 0 -%}
+server: 
+  {% for cluster_node in groups[kubernetes_config.cluster.group_name] +%}
   {% if
       cluster_node in groups['kubernetes_master'] 
     -%}
@@ -63,9 +64,18 @@ server: {% for cluster_node in groups[kubernetes_config.cluster.group_name] +%}
 
         {%- endif -%}
         :6443
-    {%- endif -%}
+    {%- endif %}
 
-  {%- endfor %}
+  {% endfor +%}
+  {% elif 
+    kubernetes_config.cluster.prime.name != inventory_hostname
+      and
+    k3s_installed.rc == 1
+  %}
+
+server:
+  - https://{{ hostvars[kubernetes_config.cluster.prime.name].ansible_host }}:6443
+  {%- endif %}
 
 {%- endif %}
 
