@@ -4,6 +4,7 @@
     name: nfc_common
   vars:
     common_gather_facts: false
+    initial_common_tasks: true # Don't run init tasks
     aptInstall:
       - name: curl
       - name: iptables
