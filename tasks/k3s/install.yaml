@@ -131,6 +131,7 @@
       - 304
     dest: "{{ item.dest }}"
     mode: "744"
+  changed_when: false
   register: k3s_download_script
   delegate_to: localhost
   run_once: true
@@ -162,6 +163,7 @@
       - 304
     dest: "/tmp/k3s.{{ cpu_arch.key }}"
     mode: "744"
+  changed_when: false
   register: k3s_download_files
   delegate_to: localhost
   run_once: true
@@ -347,6 +349,7 @@
   ansible.builtin.command:
     cmd: kubectl patch felixconfiguration default --type='merge' -p '{"spec":{"wireguardEnabled":true,"wireguardEnabledV6":true}}'
   changed_when: false
+  failed_when: false    # New cluster will fail
   when: >
     kubernetes_config.cluster.prime.name == inventory_hostname
       and
