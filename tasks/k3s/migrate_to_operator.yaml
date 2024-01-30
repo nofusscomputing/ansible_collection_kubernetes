@@ -64,11 +64,11 @@
 
         - name: Apply Operator Manifests
           ansible.builtin.command:
-            cmd: "kubectl create -f /tmp/{{ item | lower | replace('.j2', '') }}"
+            cmd: "kubectl create -f /var/lib/rancher/k3s/ansible/{{ item | lower | replace('.j2', '') }}"
           become: true
           changed_when: false
           failed_when: >
-            {{ 'Error from server' in operator_manifest_stdout.stderr }}
+            'Error from server' in operator_manifest_stdout.stderr
           loop: "{{ operator_manifests }}"
           register: operator_manifest_stdout
 
@@ -87,11 +87,9 @@
           become: true
           changed_when: false
           failed_when: >
-            {{
-              'Error from server' in operator_manifest_stdout.stderr
-                and
-              'ensure CRDs are installed first' in operator_manifest_stdout.stderr
-            }}
+            'Error from server' in operator_manifest_stdout.stderr
+              and
+            'ensure CRDs are installed first' in operator_manifest_stdout.stderr
           loop: "{{ operator_manifests }}"
           register: operator_manifest_stdout
 
@@ -117,6 +115,7 @@
         mode: '777'
         owner: root
         group: 'root'
+      changed_when: false
       become: true
       delegate_to: localhost
       loop: "{{ nfc_kubernetes_install_architectures | dict2items }}"
