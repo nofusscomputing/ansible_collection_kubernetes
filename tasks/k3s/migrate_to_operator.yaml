@@ -13,7 +13,6 @@
       - FelixConfiguration-manifest-Calico_Cluster.yaml
       - IPPool-manifest-Calico_Cluster.yaml.j2
       - APIServer-manifest-Calico_Cluster.yaml
-      # - calico.yaml.j2
   block:
 
 
@@ -48,12 +47,14 @@
       when: file_calico_yaml_metadata.stat.exists
 
 
+      # Save the manifests in a dir so that diff's can be shown for changes
     - name: Copy Manifest for addition
       ansible.builtin.template:
         src: "{{ item }}"
-        dest: "/tmp/{{ item | lower | replace('.j2', '') }}"
+        dest: "/var/lib/rancher/k3s/ansible/{{ item | lower | replace('.j2', '') }}"
         mode: '744'
       become: true
+      diff: true
       loop: "{{ operator_manifests }}"
 
 
@@ -66,7 +67,6 @@
             cmd: "kubectl create -f /tmp/{{ item | lower | replace('.j2', '') }}"
           become: true
           changed_when: false
-          diff: true
           failed_when: >
             {{ 'Error from server' in operator_manifest_stdout.stderr }}
           loop: "{{ operator_manifests }}"
@@ -83,10 +83,9 @@
 
         - name: Apply Operator Manifests - "Rescue"
           ansible.builtin.command:
-            cmd: "kubectl replace -f /tmp/{{ item | lower | replace('.j2', '') }}"
+            cmd: "kubectl replace -f /var/lib/rancher/k3s/ansible/{{ item | lower | replace('.j2', '') }}"
           become: true
           changed_when: false
-          diff: true
           failed_when: >
             {{
               'Error from server' in operator_manifest_stdout.stderr
@@ -171,7 +170,7 @@
 
     - name: Remove Operator Manifests
       ansible.builtin.command:
-        cmd: "kubectl delete -f /tmp/{{ item | lower | replace('.j2', '') }}"
+        cmd: "kubectl delete -f /var/lib/rancher/k3s/ansible/{{ item | lower | replace('.j2', '') }}"
       become: true
       changed_when: false
       failed_when: false
@@ -196,15 +195,6 @@
 
 
   always:
-
-
-    - name: Remove Operator Manifests files
-      ansible.builtin.file:
-        name: "/tmp/{{ item | lower | replace('.j2', '') }}"
-        state: absent
-      become: true
-      changed_when: false
-      loop: "{{ operator_manifests }}"
 
 
     - name: Clean-up Temp File
