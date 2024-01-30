@@ -289,6 +289,22 @@
   when: kubernetes_config.cluster.prime.name == inventory_hostname
 
 
+- name: Install Calico Operator
+  ansible.builtin.include_tasks:
+    file: migrate_to_operator.yaml
+    apply:
+      tags:
+        - always
+  when: >-
+    (
+      'operator_migrate_calico' in ansible_run_tags
+        or
+      'operator_calico' in ansible_run_tags
+    )
+      and
+    kubernetes_config.cluster.prime.name == inventory_hostname
+
+
 - name: Wait for kubernetes prime to be ready
   ansible.builtin.shell:
     cmd: |
@@ -327,22 +343,6 @@
     kubernetes_config.cluster.prime.name == inventory_hostname
       and
     kubernetes_olm_install | default(false) | bool
-
-
-- name: Install Calico Operator
-  ansible.builtin.include_tasks:
-    file: migrate_to_operator.yaml
-    apply:
-      tags:
-        - always
-  when: >-
-    (
-      'operator_migrate_calico' in ansible_run_tags
-        or
-      'operator_calico' in ansible_run_tags
-    )
-      and
-    kubernetes_config.cluster.prime.name == inventory_hostname
 
 
 - name: Enable Cluster Encryption
