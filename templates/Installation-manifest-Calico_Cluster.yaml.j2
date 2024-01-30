@@ -16,7 +16,8 @@ spec:
       encapsulation: VXLAN
       natOutgoing: Enabled
       nodeSelector: all()
-    linuxDataplane: Iptables
+    # linuxDataplane: Iptables
+    linuxDataplane: BPF
     mtu: 0
     multiInterfaceMode: None
     nodeAddressAutodetectionV4:

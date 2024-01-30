@@ -13,6 +13,7 @@
       - FelixConfiguration-manifest-Calico_Cluster.yaml
       - IPPool-manifest-Calico_Cluster.yaml.j2
       - APIServer-manifest-Calico_Cluster.yaml
+      - ConfigMap-manifest-Calico_Service_Endpoint.yaml.j2
   block:
 
 
