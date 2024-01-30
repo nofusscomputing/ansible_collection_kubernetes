@@ -12,10 +12,7 @@
       and
     not kubernetes_installed | default(false) | bool
   tags:
-    - never
-    - install
-    - operator_calico
-    - operator_migrate_calico
+    - always
 
 
 - name: K3s Configure
@@ -29,6 +26,4 @@
       and
     kubernetes_installed | default(false) | bool
   tags:
-    - never
-    - install
-    - operator_migrate_calico
+    - always
