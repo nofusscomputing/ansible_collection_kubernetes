@@ -10,7 +10,7 @@
     operator_manifests:
       - Deployment-manifest-Calico_Operator.yaml.j2
       - Installation-manifest-Calico_Cluster.yaml.j2
-      - FeilixConfiguration-manifest-Calico_Cluster.yaml
+      - FelixConfiguration-manifest-Calico_Cluster.yaml
       - IPPool-manifest-Calico_Cluster.yaml.j2
       - APIServer-manifest-Calico_Cluster.yaml
       # - calico.yaml.j2
