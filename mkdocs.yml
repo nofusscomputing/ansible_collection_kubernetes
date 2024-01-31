@@ -43,6 +43,8 @@ nav:
 
         - projects/ansible/roles/kubernetes/rbac.md
 
+        - projects/ansible/roles/kubernetes/release_notes.md
+
 
 - Operations: 
 
