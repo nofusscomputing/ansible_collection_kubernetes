@@ -110,6 +110,13 @@
     - ansible_os_family == 'Debian'
 
 
+- name: Check for Network Manager Directory
+  ansible.builtin.stat:
+    name: /etc/NetworkManager/conf.d
+  become: true
+  register: directory_network_manager_metadata
+
+
 - name: Network Manager Setup
   ansible.builtin.copy:
     content: |-
@@ -128,6 +135,7 @@
     group: root
   become: true
   diff: true
+  when: directory_network_manager_metadata.stat.exists
 
 
 - name: Check if K3s Installed
