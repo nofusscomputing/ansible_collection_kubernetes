@@ -15,6 +15,10 @@ This document details any changes that have occured that may impact users of thi
 
     - All new cluster installations will be deployed with the operator
 
-    - Existing deployments will be required to run a deployment with job tag `operator_migrate_calico` to migrate their deployment to the operator
-    
-    - This tag will be removed in the future at no set date.
+        - Existing deployments will be required to run a deployment with job tag `operator_migrate_calico` to migrate their deployment to the operator
+        
+        - if an issue occurs with the migration it can be rolled back by `kubectl delete -f` for all manifests in the `/var/lib/rancher/k3s/ansible` directory and redeploying with job tag `calico_manifest`. This re-deploys calico using the current manifest.
+        
+        - This tag will be removed in the future at no set date.
+
+    - `ServiceLB` / `klipperLB` no longer deploys by default and to deploy it variable `nfc_kubernetes_enable_servicelb` must be set `true`

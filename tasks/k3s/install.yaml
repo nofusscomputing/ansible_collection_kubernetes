@@ -286,11 +286,15 @@
             kubernetes_config.cluster.prime.name == inventory_hostname
               and
             (
-              not file_calico_operator_yaml_metadata.stat.exists
-                and
-              file_calico_yaml_metadata.stat.exists
-                and
-              k3s_installed.rc == 0
+              (
+                not file_calico_operator_yaml_metadata.stat.exists
+                  and
+                file_calico_yaml_metadata.stat.exists
+                  and
+                k3s_installed.rc == 0
+              )
+                or
+              'calico_manifest' in ansible_run_tags
             )
           }}
       - src: k3s-registries.yaml.j2
@@ -342,6 +346,8 @@
         or
       not file_calico_yaml_metadata.stat.exists
     )
+      and
+    'calico_manifest' not in ansible_run_tags
       and
     kubernetes_config.cluster.prime.name == inventory_hostname
 
@@ -416,9 +422,13 @@
     kubernetes_config.cluster.networking.encrypt | default(false) | bool
       and
     (
-      'operator_migrate_calico' not in ansible_run_tags
+      'calico_manifest' in ansible_run_tags
         or
-      'operator_calico' not in ansible_run_tags
+      (
+        'operator_migrate_calico' not in ansible_run_tags
+          or
+        'operator_calico' not in ansible_run_tags
+      )
     )
 
 
