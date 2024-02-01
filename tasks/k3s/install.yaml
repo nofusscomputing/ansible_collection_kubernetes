@@ -325,7 +325,7 @@
     cmd: |
       INSTALL_K3S_SKIP_DOWNLOAD=true \
       INSTALL_K3S_VERSION="v{{ KubernetesVersion }}{{ KubernetesVersion_k3s_prefix }}" \
-      /tmp/install.sh
+      /tmp/install.sh --cluster-init
   changed_when: false
   when: kubernetes_config.cluster.prime.name == inventory_hostname
 
