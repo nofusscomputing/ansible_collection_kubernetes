@@ -411,6 +411,34 @@
     kubernetes_olm_install | default(false) | bool
 
 
+- name: Uninstall OLM
+  ansible.builtin.shell:
+    cmd: |
+      kubectl delete -n olm deployment packageserver;
+      kubectl delete -n olm deployment catalog-operator;
+      kubectl delete -n olm deployment olm-operator;
+
+      kubectl delete crd catalogsources.operators.coreos.com;
+      kubectl delete` crd clusterserviceversions.operators.coreos.com;
+      kubectl delete crd installplans.operators.coreos.com;
+      kubectl delete crd olmconfigs.operators.coreos.com;
+      kubectl delete crd operatorconditions.operators.coreos.com;
+      kubectl delete crd operatorgroups.operators.coreos.com;
+      kubectl delete crd operators.operators.coreos.com;
+      kubectl delete crd subscriptions.operators.coreos.com;
+
+      kubectl delete namespace operators --force;
+      kubectl delete namespace olm --force;
+
+  changed_when: false
+  failed_when: false
+  register: install_olm
+  when: >
+    kubernetes_config.cluster.prime.name == inventory_hostname
+      and
+    'olm_uninstall' not in ansible_run_tags
+
+
 - name: Enable Cluster Encryption
   ansible.builtin.command:
     cmd: kubectl patch felixconfiguration default --type='merge' -p '{"spec":{"wireguardEnabled":true,"wireguardEnabledV6":true}}'
