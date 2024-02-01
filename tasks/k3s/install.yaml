@@ -327,7 +327,10 @@
       INSTALL_K3S_VERSION="v{{ KubernetesVersion }}{{ KubernetesVersion_k3s_prefix }}" \
       /tmp/install.sh --cluster-init
   changed_when: false
-  when: kubernetes_config.cluster.prime.name == inventory_hostname
+  when: >
+    kubernetes_config.cluster.prime.name == inventory_hostname
+      and
+    k3s_installed.rc == 1
 
 
 - name: Install Calico Operator
@@ -491,6 +494,8 @@
     Kubernetes_Master | default(false) | bool
       and
     not kubernetes_config.cluster.prime.name == inventory_hostname
+      and
+    k3s_installed.rc == 1
 
 
 - name: Install K3s (worker nodes)
@@ -507,6 +512,8 @@
   changed_when: false
   when: >
     not Kubernetes_Master | default(false) | bool
+      and
+    k3s_installed.rc == 1
 
 
 - name: Set Kubernetes Final Install Fact
