@@ -21,9 +21,9 @@ nfc_kubernetes_enable_servicelb: false
 #
 #                     Old Vars requiring refactoring
 #
-############################################################################################################
-KubernetesPodSubnet: 10.85.0.0/16
-KubernetesServiceSubnet: 10.86.0.0/16
+# ############################################################################################################
+# KubernetesPodSubnet: 10.85.0.0/16
+# KubernetesServiceSubnet: 10.86.0.0/16
 
 
 Kubernetes_Prime: false                                    # Optional, Boolean. Is the current host the Prime master?
