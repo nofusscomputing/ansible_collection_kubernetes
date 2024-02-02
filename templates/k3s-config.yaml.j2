@@ -123,7 +123,8 @@
       "system-reserved=cpu=" + kubelet_arg_system_reserved_cpu  + ",memory=" + kubelet_arg_system_reserved_memory + 
       ",ephemeral-storage=" + kubelet_arg_system_reserved_storage
     ],
-    "node-name": inventory_hostname
+    "node-name": inventory_hostname,
+    "node-ip": ansible_default_ipv4.address
   }
 
 -%}
