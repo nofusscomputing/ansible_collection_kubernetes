@@ -142,7 +142,19 @@
 
         {%- if hostvars[cluster_node].host_external_ip is defined -%}
 
-          {%- set server_node = hostvars[cluster_node].host_external_ip -%}
+          {%- if
+            hostvars[cluster_node].host_external_ip != ansible_default_ipv4.address
+              and
+            cluster_node == inventory_hostname
+          -%} {# Server self, use internal ip if external ip exists #}
+
+            {%- set server_node = ansible_default_ipv4.address -%}
+
+          {%- else -%}
+
+            {%- set server_node = hostvars[cluster_node].host_external_ip -%}
+          
+          {%- endif -%}
 
         {%- else -%}
 
