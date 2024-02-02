@@ -182,7 +182,11 @@
 
 
 
-{%- if host_external_ip | default('') -%}
+{%- if
+  host_external_ip is defined
+    and 
+  ansible_default_ipv4.address != host_external_ip
+-%}
   
   {%- set all_nodes_config = all_nodes_config | combine({
     "node-external-ip": host_external_ip,
