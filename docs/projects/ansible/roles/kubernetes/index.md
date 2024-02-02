@@ -6,12 +6,10 @@ template: project.html
 about: https://gitlab.com/nofusscomputing/projects/ansible/roles/kubernetes
 ---
 
-This Ansible roles purpose is to install and configure Kubernetes with configuration from code. You can also use [our playbooks](../../playbooks/index.md) to deploy using this role. this is especially useful if you are also using [our Ansible Execution Environment](../../execution_environment/index.md) 
+This Ansible role is designed to deploy a K3s Kubernetes cluster. After adding your configuration, the cluster will deploy and have a configured CNI (calico) and be in a state ready to use. This role can be used with our [our playbooks](../../playbooks/index.md) or comes included, along with the playbook within our [Ansible Execution Environment](../../execution_environment/index.md).
 
 
 ## Features
-
-This role deploys a K3s cluster. In addition it has the following features:
 
 - CNI Setup
 
@@ -33,11 +31,11 @@ This role deploys a K3s cluster. In addition it has the following features:
 
     - Service Load Balancer Namespace
 
-- _[ToDo-#3](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/issues/3)_ Encryption between nodes (Wireguard)
+- Encryption between nodes (Wireguard)
 
 - [Firewall configured for kubernetes host](firewall.md)
 
-- _[ToDo-#2](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/issues/2)_ Multi-node Deployment
+- Multi-node Deployment
 
 - OpenID Connect SSO Authentication
 
@@ -46,6 +44,8 @@ This role deploys a K3s cluster. In addition it has the following features:
 - _[ToDo-#5](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/issues/5)_ Restore backup on fresh install of a cluster
 
 - Installs OLM for operator subscriptions
+
+- Install MetalLB
 
 
 ## Role Workflow
@@ -70,6 +70,7 @@ If the playbook is setup as per [our recommendation](ansible.md) step 2 onwards 
 
 !!! tip
     If you prefer to manually restart the kubernetes service the following variables can be set to prevent a restart of the kubernetes service
+
     ``` yaml
     nfc_kubernetes_no_restart: false
     nfc_kubernetes_no_restart_master: false

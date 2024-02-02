@@ -39,13 +39,13 @@
       )
         or
       (
-        inventory_hostname == kubernetes_config.config.prime.name
+        inventory_hostname == kubernetes_config.cluster.prime.name
           and
         nfc_kubernetes_no_restart_prime
       )
         or
       (
-        inventory_hostname in kubernetes_worker
+        inventory_hostname in groups['kubernetes_worker']
           and
         nfc_kubernetes_no_restart_slave
       )
