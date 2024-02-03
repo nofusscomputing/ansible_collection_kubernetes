@@ -1,0 +1,49 @@
+---
+
+  # Save the manifests in a dir so that diff's can be shown for changes
+- name: Copy Manifest for addition - {{ manifest.name }}
+  ansible.builtin.template:
+    src: "{{ manifest.template }}"
+    dest: "/var/lib/rancher/k3s/ansible/{{ manifest.template | lower | replace('.j2', '') }}"
+    mode: '744'
+  become: true
+  diff: true
+
+
+- name: Try / Catch
+  block:
+
+      # Try to create first, if fail use replace.
+    - name: Apply Manifest Create - {{ manifest.name }}
+      ansible.builtin.command:
+        cmd: "kubectl create -f /var/lib/rancher/k3s/ansible/{{ manifest.template | lower | replace('.j2', '') }}"
+      become: true
+      changed_when: false
+      failed_when: >
+        'Error from server' in manifest_stdout.stderr
+      register: manifest_stdout
+
+
+  rescue:
+
+
+    - name: TRACE - Manifest Create - {{ manifest.name }}
+      ansible.builtin.debug:
+        msg: "{{ manifest_stdout }}"
+
+
+    - name: Replace Manifests - "Rescue" - {{ manifest.name }}
+      ansible.builtin.command:
+        cmd: "kubectl replace -f /var/lib/rancher/k3s/ansible/{{ manifest.template | lower | replace('.j2', '') }}"
+      become: true
+      changed_when: false
+      failed_when: >
+        'Error from server' in manifest_stdout.stderr
+          and
+        'ensure CRDs are installed first' in manifest_stdout.stderr
+      register: manifest_stdout
+
+
+    - name: TRACE - Replace Manifest - "Rescue" - {{ manifest.name }}
+      ansible.builtin.debug:
+        msg: "{{ manifest_stdout }}"

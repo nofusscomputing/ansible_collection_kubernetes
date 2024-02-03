@@ -6,24 +6,223 @@
 # Dont edit this file directly as it will be overwritten.
 #
 
-flannel-backend: none
-cluster-cidr: "{{ KubernetesPodSubnet }}"
-cluster-init: true
-{% if not Kubernetes_Prime | default(false) | bool -%}server: https://{{ hostvars[kubernetes_config.cluster.prime.name].ansible_host }}:6443{% endif %}
-service-cidr: "{{ KubernetesServiceSubnet }}"
-disable-network-policy: true
-disable:
-  - traefik
-kube-apiserver-arg:
-  - audit-log-path=/var/lib/rancher/k3s/server/logs/audit.log
-  - audit-policy-file=/var/lib/rancher/k3s/server/audit.yaml
-  # - admission-control-config-file=/var/lib/rancher/k3s/server/psa.yaml
-  {% if kubernetes_oidc.enabled | default(false) | bool -%}
-  - oidc-issuer-url={{ kubernetes_oidc.issuer_url }}
-  - oidc-client-id={{ kubernetes_oidc.client_id }}
-  - oidc-username-claim={{ kubernetes_oidc.username_claim }}
-{% if kubernetes_oidc.oidc_username_prefix | default('') != '' -%}  - oidc-username-prefix={{ kubernetes_oidc.oidc_username_prefix }}{% endif %}
-  - oidc-groups-claim={{ kubernetes_oidc.groups_claim }}
-{% if kubernetes_oidc.groups_prefix | default('') != '' %}  - oidc-groups-prefix={{ kubernetes_oidc.groups_prefix }}{% endif %}
-{% endif %}
-{% if host_external_ip | default('') %} node-external-ip: "{{ host_external_ip }}"{% endif %}
+{%- if inventory_hostname in groups['kubernetes_master'] -%}
+  {%
+
+  set kube_apiserver_arg = [
+        "audit-log-path=/var/lib/rancher/k3s/server/logs/audit.log",
+        "audit-log-maxage=" + kube_apiserver_arg_audit_log_maxage | string,
+        "audit-policy-file=/var/lib/rancher/k3s/server/audit.yaml",
+      ]
+
+
+  -%}
+    {%
+    set servers_config = {
+        "cluster-cidr": KubernetesPodSubnet,
+        "disable": [
+          "traefik"
+        ],
+        "disable-network-policy": true,
+        "etcd-snapshot-retention": kubernetes_etcd_snapshot_retention | int,
+        "etcd-snapshot-schedule-cron":  kubernetes_etcd_snapshot_cron_schedule | string,
+        "flannel-backend": "none",
+        "service-cidr": KubernetesServiceSubnet
+      }
+    -%}
+
+    {%- if 
+          kubernetes_config.cluster.domain_name is defined
+            and
+          kubernetes_config.cluster.domain_name | default('') != ''
+    -%}
+
+        {%- set servers_config = servers_config | combine({
+          "cluster-domain": kubernetes_config.cluster.domain_name
+        }) -%}
+
+    {%- endif -%}
+
+    {%- if kubernetes_config.cluster.oidc.enabled | default(false) | bool -%}
+
+      {%- 
+        set kube_apiserver_arg = kube_apiserver_arg + [
+        "oidc-client-id=" + kubernetes_config.cluster.oidc.client_id,
+        "oidc-groups-claim=" + kubernetes_config.cluster.oidc.groups_claim,
+        "oidc-issuer-url=" + kubernetes_config.cluster.oidc.issuer_url,
+        "oidc-username-claim=" + kubernetes_config.cluster.oidc.username_claim
+      ] -%}
+
+      {%- if kubernetes_config.cluster.oidc.oidc_username_prefix | default('') != '' -%}
+
+        {%- set kube_apiserver_arg = kube_apiserver_arg + [
+          "oidc-username-prefix=" + kubernetes_config.cluster.oidc.oidc_username_prefix
+        ] -%}
+
+      {%- endif -%}
+
+      {%- if kubernetes_config.cluster.oidc.groups_prefix | default('') != '' -%}
+
+        {%- set kube_apiserver_arg = kube_apiserver_arg + [
+          "oidc-groups-prefix=" + kubernetes_config.cluster.oidc.groups_prefix
+        ]
+        -%}
+
+      {%- endif -%}
+
+    {%- endif -%}
+
+
+    {%- if (
+      nfc_kubernetes_enable_metallb | default(false) 
+        or 
+      not nfc_kubernetes_enable_servicelb | default(false)
+    ) -%}
+
+      {%- set disable = servers_config.disable + [ "servicelb" ] -%}
+
+      {%
+      set servers_config = servers_config | combine({
+          "disable": disable 
+        })
+      -%}
+
+
+    {%- endif -%} 
+
+    {%- if (
+      not nfc_kubernetes_enable_metallb | default(false)
+        and
+      nfc_kubernetes_enable_servicelb | default(false)
+    ) -%}
+      
+      {%- set servers_config = servers_config | combine({
+        "servicelb-namespace": kubernetes_config.cluster.networking.service_load_balancer_namespace | default('kube-system')
+      }) -%}
+
+    {%- endif -%}
+
+
+{# Combine Remaining Server Objects #}
+
+{%
+  set servers_config = servers_config | combine({
+    "kube-apiserver-arg": kube_apiserver_arg
+  })
+-%}
+
+{%- endif -%}
+{# Eof Server Nodes #}
+
+{# SoF All Nodes #}
+
+{%
+
+  set all_nodes_config = {
+    "kubelet-arg": [
+      "system-reserved=cpu=" + kubelet_arg_system_reserved_cpu  + ",memory=" + kubelet_arg_system_reserved_memory + 
+      ",ephemeral-storage=" + kubelet_arg_system_reserved_storage
+    ],
+    "node-name": inventory_hostname,
+  }
+
+-%}
+
+
+{%- if groups[kubernetes_config.cluster.group_name] | default([]) | list | length > 0 -%}
+  
+  {%- if k3s_installed.rc == 0 -%}
+
+    {%- set ns = namespace(server=[]) -%}
+
+    {%- for cluster_node in groups[kubernetes_config.cluster.group_name] -%}
+
+      {%- if cluster_node in groups['kubernetes_master'] -%}
+
+        {%- if hostvars[cluster_node].host_external_ip is defined -%}
+
+          {%- if
+            hostvars[cluster_node].host_external_ip != ansible_default_ipv4.address
+              and
+            cluster_node == inventory_hostname
+          -%} {# Server self, use internal ip if external ip exists #}
+
+            {%- set server_node = ansible_default_ipv4.address -%}
+
+          {%- else -%}
+
+            {%- set server_node = hostvars[cluster_node].host_external_ip -%}
+          
+          {%- endif -%}
+
+        {%- else -%}
+
+          {%- set server_node = hostvars[cluster_node].ansible_host -%}
+
+        {%- endif -%}
+
+        {%- set ns.server = (ns.server | default([])) + [
+          "https://" + server_node + ":6443"
+        ] -%}
+
+      {%- endif -%}
+
+    {%- endfor -%}
+
+    {%- set all_nodes_config = all_nodes_config | combine({
+      "server": ns.server,
+    }) -%}
+
+  {%- elif 
+    kubernetes_config.cluster.prime.name != inventory_hostname
+      and
+    k3s_installed.rc == 1
+  -%}
+
+    {%- set server = (server | default([])) + [
+      "https://" + hostvars[kubernetes_config.cluster.prime.name].ansible_host + ":6443"
+    ] -%}
+
+    {%- set all_nodes_config = all_nodes_config | combine({
+      "server": server,
+    }) -%}
+
+  {%- endif -%}
+
+{%- endif -%}
+
+
+
+{%- if
+  host_external_ip is defined
+    and 
+  ansible_default_ipv4.address != host_external_ip
+-%}
+  
+  {%- set all_nodes_config = all_nodes_config | combine({
+    "node-external-ip": host_external_ip
+   }) -%}
+
+{%- else -%}
+
+  {%- set all_nodes_config = all_nodes_config | combine({
+    "node-ip": ansible_default_ipv4.address
+   }) -%}
+  
+
+{%- endif -%}
+
+{# EoF All Nodes #}
+
+
+{%- if inventory_hostname in groups['kubernetes_master'] -%}
+
+  {%- set servers_config = servers_config | combine( all_nodes_config ) -%}
+
+  {{ servers_config | to_nice_yaml(indent=2) }}
+
+{%- else -%}
+
+  {{ all_nodes_config | to_nice_yaml(indent=2) }}
+
+{%- endif -%}

@@ -1,0 +1,17 @@
+---
+
+apiVersion: crd.projectcalico.org/v1
+kind: FelixConfiguration
+metadata:
+  name: default
+spec:
+  # bpfConnectTimeLoadBalancing: TCP
+  # bpfExternalServiceMode: DSR
+  # bpfHostNetworkedNATWithoutCTLB: Enabled
+  bpfLogLevel: ""
+  floatingIPs: Disabled
+  healthPort: 9099
+  logSeverityScreen: Info
+  reportingInterval: 0s
+  wireguardEnabled: true
+  wireguardEnabledV6: true

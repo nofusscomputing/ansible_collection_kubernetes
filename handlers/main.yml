@@ -16,6 +16,38 @@
 
 - name: Restart Kubernetes
   ansible.builtin.service:
-    name: "{% if kubernetes_type == 'k3s' %}k3s{% else %}kubelet{% endif %}"
+    name: |-
+      {%- if kubernetes_type == 'k3s' -%}
+        {%- if Kubernetes_Master | default(false) | bool -%}
+          k3s
+        {%- else -%}
+          k3s-agent
+        {%- endif -%}
+      {%- else -%}
+        kubelet
+      {%- endif %}
     state: restarted
   listen: kubernetes_restart
+  when: |-
+    not (
+      nfc_kubernetes_no_restart
+        or
+      (
+        inventory_hostname in groups['kubernetes_master']
+          and
+        nfc_kubernetes_no_restart_master
+      )
+        or
+      (
+        inventory_hostname == kubernetes_config.cluster.prime.name
+          and
+        nfc_kubernetes_no_restart_prime
+      )
+        or
+      (
+        inventory_hostname in groups['kubernetes_worker']
+          and
+        nfc_kubernetes_no_restart_slave
+      )
+    )
+

@@ -1,5 +1,29 @@
-KubernetesPodSubnet: 10.85.0.0/16
-KubernetesServiceSubnet: 10.86.0.0/16
+
+# Depreciated:
+#      Calico is being migrated to use the calico operator.
+#      in a near future release, this method of deploying calico
+#      will be removed. use tag `operator_migrate_calico` to migrate
+calico_image_tag: v3.25.0 # Depreciated
+# EoF Depreciated
+# SoF New Variables
+nfc_kubernetes_calico_version: v3.27.0
+nfc_kubernetes_tigera_operator_registry: quay.io
+nfc_kubernetes_tigera_operator_image: tigera/operator
+nfc_kubernetes_tigera_operator_tag: v1.32.3               # Calico v3.27.0
+# EoF New Variables, EEoF Depreciated
+
+
+nfc_kubernetes_enable_metallb: false
+nfc_kubernetes_enable_servicelb: false
+
+
+############################################################################################################
+#
+#                     Old Vars requiring refactoring
+#
+# ############################################################################################################
+# KubernetesPodSubnet: 10.85.0.0/16
+# KubernetesServiceSubnet: 10.86.0.0/16
 
 
 Kubernetes_Prime: false                                    # Optional, Boolean. Is the current host the Prime master?
@@ -7,57 +31,43 @@ Kubernetes_Master: false                                   # Optional, Boolean. 
 
 ContainerDioVersion: 1.6.20-1
 KubernetesVersion: '1.26.2'                                # must match the repository release version
+kubernetes_version_olm: '0.26.0'
+
+
+
 
 KubernetesVersion_k8s_prefix: '-00'
 KubernetesVersion_k3s_prefix: '+k3s1'
 
 kubernetes_private_container_registry: []                  # Optional, Array. if none use `[]`
 
+kubernetes_etcd_snapshot_cron_schedule: '0 */12 * * *'
+kubernetes_etcd_snapshot_retention: 5
+
 # host_external_ip: ''                                     # Optional, String. External IP Address for host.
 
-# Optional, Dict. Used to configure Kubernetes with OIDC Authentication.
-# kubernetes_oidc:
-#   enabled: true                                          # Mandatory, boolen. speaks for itself.
-#   issuer_url: https://domainname.com/realms/realm-name   # Mandatory, String. URL of OIDC Provider
-#   client_id: kubernetes-test                             # Mandatory, string. OIDC Client ID
-#   username_claim: preferred_username                     # Mandatory, String. Claim name containing username.
-#   username_prefix: oidc                                  # Optional, String. What to prefix to username
-#   groups_claim: roles                                    # Mandatory, String. Claim name containing groups
-#   groups_prefix: ''                                      # Optional, String. string to append to groups
-
 kubernetes_type: k8s                                       # Mandatory, String. choice K8s | k3s
+
+kube_apiserver_arg_audit_log_maxage: 2
+
+kubelet_arg_system_reserved_cpu: 450m
+kubelet_arg_system_reserved_memory: 512Mi
+kubelet_arg_system_reserved_storage: 8Gi
+
+# kubernetes_olm_install: true # optional, boolean. default=true
 
 
 nfc_kubernetes:
   enable_firewall: true             # Optional, bool enable firewall rules from role 'nfc_firewall'
 
+nfc_kubernetes_no_restart: false         # Set to true to prevent role from restarting kubernetes on the host(s)
+nfc_kubernetes_no_restart_master: false  # Set to true to prevent role from restarting kubernetes on master host(s)
+nfc_kubernetes_no_restart_prime: false   # Set to true to prevent role from restarting kubernetes on prime host
+nfc_kubernetes_no_restart_slave: false   # Set to true to prevent role from restarting kubernetes on slave host(s)
+
 
 k3s:
   files:
-    # - name: config.yaml
-    #   path: /etc/rancher/k3s
-    #   content: |
-    #     flannel-backend: none
-    #     cluster-cidr: "{{ KubernetesPodSubnet }}"
-    #     cluster-init: true
-    #     {% if not Kubernetes_Prime | default(false) | bool -%}server: https://{{ hostvars[kubernetes_config.cluster.prime.name].ansible_host }}:6443{% endif %}
-    #     service-cidr: "{{ KubernetesServiceSubnet }}"
-    #     disable-network-policy: true
-    #     disable:
-    #       - traefik
-    #     kube-apiserver-arg:
-    #       - audit-log-path=/var/lib/rancher/k3s/server/logs/audit.log
-    #       - audit-policy-file=/var/lib/rancher/k3s/server/audit.yaml
-    #       # - admission-control-config-file=/var/lib/rancher/k3s/server/psa.yaml
-    #       {% if kubernetes_oidc.enabled | default(false) | bool -%}
-    #       - oidc-issuer-url={{ kubernetes_oidc.issuer_url }}
-    #       - oidc-client-id={{ kubernetes_oidc.client_id }}
-    #       - oidc-username-claim={{ kubernetes_oidc.username_claim }}
-    #       - {% if kubernetes_oidc.oidc_username_prefix | default('') != '' %}oidc-username-prefix={{ kubernetes_oidc.oidc_username_prefix }}{% endif %}
-    #       - oidc-groups-claim={{ kubernetes_oidc.groups_claim }}
-    #       {% if kubernetes_oidc.groups_prefix | default('') != '' %}- oidc-groups-prefix={{ kubernetes_oidc.groups_prefix }}{% endif %}
-    #     {% endif %}
-    #     node-external-ip: "{{ host_external_ip }}"
 
     - name: audit.yaml
       path: /var/lib/rancher/k3s/server
@@ -66,6 +76,7 @@ k3s:
         kind: Policy
         rules:
         - level: Request
+      when: "{{ Kubernetes_Master | default(false) }}"
 
     - name: 90-kubelet.conf
       path: /etc/sysctl.d
@@ -79,7 +90,7 @@ k3s:
     - name: psa.yaml
       path: /var/lib/rancher/k3s/server
       content: ""
-        # apiVersion: apiserver.config.k8s.io/v1
+        # apiVersion: apiserver.conf0 */12 * * *ig.k8s.io/v1
         # kind: AdmissionConfiguration
         # plugins:
         # - name: PodSecurity
@@ -97,7 +108,7 @@ k3s:
         #       usernames: []
         #       runtimeClasses: []
         #       namespaces: [kube-system]
-
+      when: "{{ kubernetes_config.cluster.prime.name == inventory_hostname }}"
 
 
 #############################################################################################
@@ -107,12 +118,13 @@ k3s:
 #############################################################################################
 # kubernetes_config:                    # Dict. Cluster Config
 #   cluster:
-#     access:                           # Mandatory. List, DNS host name or IPv4/IPv6 Address. 
+#     access:                           # Mandatory. List, DNS host name or IPv4/IPv6 Address.
 #                                       # if none use '[]'
 #       - 'my.dnshostname.com'
 #       - '2001:4860:4860::8888'
 #       - '192.168.1.1'
 #     Name: earth                       # Mandatory, String. Cluster Name
+#     group_name:                       # Mandatory, String. name of the ansible inventory group containg all cluster hosts
 #     prime:
 #       name: k3s-prod                  # Mandatory, String. Ansible inventory_host that will
 #                                       # act as the prime master node.
@@ -124,3 +136,22 @@ k3s:
 #   node_token: !vault |
 #     $ANSIBLE_VAULT;1.2;AES256;kubernetes/cluster/production
 #     {rest_of encrypted key}
+#  oidc:                                                    # Used to configure Kubernetes with OIDC Authentication.
+#    enabled: true                                          # Mandatory, boolen. speaks for itself.
+#    issuer_url: https://domainname.com/realms/realm-name   # Mandatory, String. URL of OIDC Provider
+#    client_id: kubernetes-test                             # Mandatory, string. OIDC Client ID
+#    username_claim: preferred_username                     # Mandatory, String. Claim name containing username.
+#    username_prefix: oidc                                  # Optional, String. What to prefix to username
+#    groups_claim: roles                                    # Mandatory, String. Claim name containing groups
+#    groups_prefix: ''                                      # Optional, String. string to append to groups
+
+#     hosts: 
+
+#       my-host-name:
+#         labels:
+#           mylabel: myvalue
+
+#         taints:
+#           - effect: NoSchedule
+#             key: taintkey
+#             value: taintvalue

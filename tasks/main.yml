@@ -1,14 +1,38 @@
 ---
+
 - name: Firewall Rules
   ansible.builtin.include_role:
     name: nfc_firewall
   vars:
     nfc_firewall_enabled_kubernetes: "{{ nfc_kubernetes.enable_firewall | default(false) | bool }}"
+  tags:
+    - never
+    - install
+
+
+# fix, reload firewall `iptables-reloader`
+- name: Reload iptables
+  ansible.builtin.command:
+    cmd: bash -c /usr/bin/iptables-reloader
+  changed_when: false
+  tags:
+    - never
+    - install
+
 
 - name: K8s Cluster
   ansible.builtin.include_tasks: k8s.yaml
   when: kubernetes_type == 'k8s'
+  tags:
+    - never
+    - install
+
 
 - name: K3s Cluster
   ansible.builtin.include_tasks: k3s.yaml
   when: kubernetes_type == 'k3s'
+  tags:
+    - never
+    - install
+    - operator_calico
+    - operator_migrate_calico
