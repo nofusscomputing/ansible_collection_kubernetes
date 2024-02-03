@@ -124,7 +124,6 @@
       ",ephemeral-storage=" + kubelet_arg_system_reserved_storage
     ],
     "node-name": inventory_hostname,
-    "node-ip": ansible_default_ipv4.address
   }
 
 -%}
@@ -201,8 +200,15 @@
 -%}
   
   {%- set all_nodes_config = all_nodes_config | combine({
-    "node-external-ip": host_external_ip,
+    "node-external-ip": host_external_ip
    }) -%}
+
+{%- else -%}
+
+  {%- set all_nodes_config = all_nodes_config | combine({
+    "node-ip": ansible_default_ipv4.address
+   }) -%}
+  
 
 {%- endif -%}
 
