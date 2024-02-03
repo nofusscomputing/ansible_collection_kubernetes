@@ -42,4 +42,12 @@ spec:
   nonPrivileged: Disabled
   serviceCIDRs:
     - {{ kubernetes_config.cluster.networking.ServiceSubnet }}
+  typhaDeployment:
+    spec:
+      template:
+        spec:
+          tolerations:
+            - effect: NoExecute
+              key: CriticalAddonsOnly
+              value: "true"
   variant: Calico
