@@ -5,9 +5,9 @@ kind: FelixConfiguration
 metadata:
   name: default
 spec:
-  bpfConnectTimeLoadBalancing: TCP
-  bpfExternalServiceMode: DSR
-  bpfHostNetworkedNATWithoutCTLB: Enabled
+  # bpfConnectTimeLoadBalancing: TCP
+  # bpfExternalServiceMode: DSR
+  # bpfHostNetworkedNATWithoutCTLB: Enabled
   bpfLogLevel: ""
   floatingIPs: Disabled
   healthPort: 9099
