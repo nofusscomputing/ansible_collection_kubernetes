@@ -1,5 +1,19 @@
 ---
 
+- name: Get Hostname
+  ansible.builtin.command:
+    cmd: hostname
+  changed_when: false
+  register: hostname_to_check
+
+
+- name: Hostname Check
+  ansible.builtin.assert:
+    that:
+      - hostname_to_check.stdout == inventory_hostname
+    msg: The hostname must match the inventory_hostname
+
+
 - name: Firewall Rules
   ansible.builtin.include_role:
     name: nfc_firewall
