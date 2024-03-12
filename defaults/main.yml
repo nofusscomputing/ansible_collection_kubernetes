@@ -40,10 +40,6 @@ nfc_role_kubernetes_worker: false
 # ############################################################################################################
 
 
-
-Kubernetes_Prime: false                                    # Optional, Boolean. Is the current host the Prime master?
-Kubernetes_Master: false                                   # Optional, Boolean. Is the current host a master host?
-
 ContainerDioVersion: 1.6.20-1
 KubernetesVersion: '1.26.2'                                # must match the repository release version
 kubernetes_version_olm: '0.26.0'

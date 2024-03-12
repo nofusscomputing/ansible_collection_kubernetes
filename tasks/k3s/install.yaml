@@ -143,7 +143,7 @@
   failed_when: false
   register: k3s_installed
   when: >
-    Kubernetes_Master | default(false) | bool
+    nfc_role_kubernetes_master | default(false) | bool
 
 
 - name: Check if K3s Installed
@@ -509,7 +509,7 @@
     executable: /bin/bash
   changed_when: false
   when: >
-    Kubernetes_Master | default(false) | bool
+    nfc_role_kubernetes_master | default(false) | bool
       and
     not kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
       and
@@ -529,7 +529,7 @@
     executable: /bin/bash
   changed_when: false
   when: >
-    not Kubernetes_Master | default(false) | bool
+    not nfc_role_kubernetes_master | default(false) | bool
       and
     not kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
       and
