@@ -155,7 +155,7 @@
   failed_when: false
   register: k3s_installed
   when: >
-    not Kubernetes_worker | default(false) | bool
+    not nfc_role_kubernetes_worker | default(false) | bool
 
 
 - name: Check Machine Architecture
