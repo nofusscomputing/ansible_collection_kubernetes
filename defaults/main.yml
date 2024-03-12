@@ -67,8 +67,6 @@ kubernetes_etcd_snapshot_retention: 5
 
 # host_external_ip: ''                                     # Optional, String. External IP Address for host.
 
-kubernetes_type: k8s                                       # Mandatory, String. choice K8s | k3s
-
 kube_apiserver_arg_audit_log_maxage: 2
 
 kubelet_arg_system_reserved_cpu: 450m
