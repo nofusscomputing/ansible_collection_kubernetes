@@ -16,6 +16,8 @@ nfc_kubernetes_tigera_operator_tag: v1.32.3               # Calico v3.27.0
 nfc_kubernetes_enable_metallb: false
 nfc_kubernetes_enable_servicelb: false
 
+nfc_role_kubernetes_install_olm: false
+
 
 ############################################################################################################
 #
@@ -34,7 +36,6 @@ KubernetesVersion: '1.26.2'                                # must match the repo
 kubernetes_version_olm: '0.26.0'
 
 
-                              
 
 KubernetesVersion_k3s_prefix: '+k3s1'
 
@@ -52,8 +53,6 @@ kube_apiserver_arg_audit_log_maxage: 2
 kubelet_arg_system_reserved_cpu: 450m
 kubelet_arg_system_reserved_memory: 512Mi
 kubelet_arg_system_reserved_storage: 8Gi
-
-# kubernetes_olm_install: true # optional, boolean. default=true
 
 
 nfc_kubernetes:

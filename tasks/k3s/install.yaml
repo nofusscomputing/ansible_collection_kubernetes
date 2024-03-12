@@ -182,7 +182,10 @@
   delegate_to: localhost
   run_once: true
   # no_log: true
-  when: ansible_os_family == 'Debian'
+  when: >
+    ansible_os_family == 'Debian'
+      and
+    {{ item.when | default(true) | bool }}
   loop: "{{ download_files }}"
   vars:
     ansible_connection: local
@@ -191,6 +194,7 @@
         url: https://get.k3s.io
       - dest: /tmp/install_olm.sh
         url: https://raw.githubusercontent.com/operator-framework/operator-lifecycle-manager/v{{ kubernetes_version_olm }}/scripts/install.sh
+        when: "{{ nfc_role_kubernetes_install_olm }}"
 
 
 - name: Download K3s Binary
@@ -247,6 +251,7 @@
     group: root
   when: hash_sha256_k3s_existing_binary.stat.checksum | default('0') != hash_sha256_k3s_downloaded_binary
 
+
 - name: Copy install scripts to Host
   ansible.builtin.copy:
     src: "{{ item }}"
@@ -258,9 +263,12 @@
   loop: "{{ install_scripts }}"
   vars:
     install_scripts:
-      - "/tmp/install.sh"
-      - "/tmp/install_olm.sh"
-  # when: hash_sha256_k3s_existing_binary.stat.checksum | default('0') != hash_sha256_k3s_downloaded_binary
+      - path: "/tmp/install.sh"
+      - path: "/tmp/install_olm.sh"
+        when: "{{ nfc_role_kubernetes_install_olm }}"
+  when: >
+    {{ item.when | default(true) | bool }}
+
 
 - name: Required Initial config files
   ansible.builtin.copy:
@@ -425,7 +433,7 @@
   when: >
     kubernetes_config.cluster.prime.name == inventory_hostname
       and
-    kubernetes_olm_install | default(false) | bool
+    nfc_role_kubernetes_install_olm | default(false) | bool
 
 
 - name: Uninstall OLM
@@ -436,7 +444,7 @@
       kubectl delete -n olm deployment olm-operator;
 
       kubectl delete crd catalogsources.operators.coreos.com;
-      kubectl delete` crd clusterserviceversions.operators.coreos.com;
+      kubectl delete crd clusterserviceversions.operators.coreos.com;
       kubectl delete crd installplans.operators.coreos.com;
       kubectl delete crd olmconfigs.operators.coreos.com;
       kubectl delete crd operatorconditions.operators.coreos.com;
@@ -453,7 +461,7 @@
   when: >
     kubernetes_config.cluster.prime.name == inventory_hostname
       and
-    'olm_uninstall' not in ansible_run_tags
+    'olm_uninstall' in ansible_run_tags
 
 
 - name: Enable Cluster Encryption
