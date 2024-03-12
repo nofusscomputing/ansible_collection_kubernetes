@@ -146,6 +146,20 @@
   changed_when: false
   failed_when: false
   register: k3s_installed
+  when: >
+    Kubernetes_Master | default(false) | bool
+
+
+- name: Check if K3s Installed
+  ansible.builtin.shell:
+    cmd: |
+      if [[ $(service k3s-agent status) ]]; then exit 0; else exit 1; fi
+    executable: /bin/bash
+  changed_when: false
+  failed_when: false
+  register: k3s_installed
+  when: >
+    not Kubernetes_Master | default(false) | bool
 
 
 - name: Check Machine Architecture
