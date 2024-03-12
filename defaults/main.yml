@@ -152,17 +152,14 @@ k3s:
 #       podSubnet: 172.16.70.0/24       # Mandatory, String. CIDR
 #       ServiceSubnet: 172.16.72.0/24   # Mandatory, String. CIDR
 #
-#                                       # Mandatory, String. Token to join nodes to the cluster
-#   node_token: !vault |
-#     $ANSIBLE_VAULT;1.2;AES256;kubernetes/cluster/production
-#     {rest_of encrypted key}
-#
 #
 #  kube_virt:
-#    enabled: false
+#    enabled: false      # Optional, Boolean. default=false. Install KubeVirt
+#
+#    nodes: []           # Optional, List of String. default=inventory_hostname. List of nodes to install kibevirt on.
 #
 #    operator:
-#      replicas: 2
+#      replicas: 2       # Optional, Integer. How many virt_operators to deploy.
 #
 #
 #  oidc:                                                    # Used to configure Kubernetes with OIDC Authentication.
@@ -173,14 +170,14 @@ k3s:
 #    username_prefix: oidc                                  # Optional, String. What to prefix to username
 #    groups_claim: roles                                    # Mandatory, String. Claim name containing groups
 #    groups_prefix: ''                                      # Optional, String. string to append to groups
-
-#     hosts:
-
-#       my-host-name:
-#         labels:
-#           mylabel: myvalue
-
-#         taints:
-#           - effect: NoSchedule
-#             key: taintkey
-#             value: taintvalue
+#
+#   hosts:
+#
+#     my-host-name:
+#       labels:
+#         mylabel: myvalue
+#
+#       taints:
+#         - effect: NoSchedule
+#           key: taintkey
+#           value: taintvalue
