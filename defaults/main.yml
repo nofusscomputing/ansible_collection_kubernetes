@@ -17,12 +17,24 @@ nfc_kubernetes_enable_metallb: false
 nfc_kubernetes_enable_servicelb: false
 
 
+nfc_role_kubernetes_container_images:
+
+  kubevirt_operator:
+    name: Kubevirt Operator
+    registry: quay.io
+    image: kubevirt/virt-operator
+    tag: v1.2.0
+
 
 nfc_role_kubernetes_cluster_domain: cluster.local
 
 nfc_role_kubernetes_etcd_enabled: false
 
 nfc_role_kubernetes_install_olm: false
+
+nfc_role_kubernetes_install_kubevirt: false
+
+nfc_role_kubernetes_kubevirt_operator_replicas: 1
 
 nfc_role_kubernetes_oidc_enabled: false
 
@@ -139,10 +151,20 @@ k3s:
 #       encrypt: true                   # Optional, Boolean. default `false`. Install wireguard for inter-node encryption
 #       podSubnet: 172.16.70.0/24       # Mandatory, String. CIDR
 #       ServiceSubnet: 172.16.72.0/24   # Mandatory, String. CIDR
+#
 #                                       # Mandatory, String. Token to join nodes to the cluster
 #   node_token: !vault |
 #     $ANSIBLE_VAULT;1.2;AES256;kubernetes/cluster/production
 #     {rest_of encrypted key}
+#
+#
+#  kube_virt:
+#    enabled: false
+#
+#    operator:
+#      replicas: 2
+#
+#
 #  oidc:                                                    # Used to configure Kubernetes with OIDC Authentication.
 #    enabled: true                                          # Mandatory, boolen. speaks for itself.
 #    issuer_url: https://domainname.com/realms/realm-name   # Mandatory, String. URL of OIDC Provider
@@ -152,7 +174,7 @@ k3s:
 #    groups_claim: roles                                    # Mandatory, String. Claim name containing groups
 #    groups_prefix: ''                                      # Optional, String. string to append to groups
 
-#     hosts: 
+#     hosts:
 
 #       my-host-name:
 #         labels:

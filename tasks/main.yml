@@ -62,3 +62,17 @@
     kubernetes_installed | default(false) | bool
   tags:
     - always
+
+
+- name: Kubevert
+  ansible.builtin.include_tasks:
+    file: kubevirt/main.yaml
+    apply:
+      tags:
+        - always
+  when: >
+    kubernetes_installed | default(false) | bool
+      and
+    nfc_role_kubernetes_install_kubevirt
+  tags:
+    - always

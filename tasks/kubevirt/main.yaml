@@ -1,0 +1,33 @@
+---
+
+- name: Validate Virtualization Support
+  ansible.builtin.include_tasks:
+    file: kubevirt/validate.yaml
+    apply:
+      tags:
+        - always
+  tags:
+    - always
+
+
+- name: Deploy KubeVirt
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "/var/lib/rancher/k3s/server/manifests/{{ item | replace('.j2', '') | lower }}"
+    owner: root
+    mode: '700'
+    force: true
+  notify: "{{ item.notify | default(omit) }}"
+  loop: "{{ templates_to_apply }}"
+  diff: true
+  vars:
+    templates_to_apply:
+      - kubevirt-operator.yaml.j2
+      - kubevirt-cr.yaml.j2
+
+
+- name: Wait for KubeVirt to initialize
+  ansible.builtin.command:
+    cmd: kubectl -n kubevirt wait kv kubevirt --for condition=Available
+  changed_when: false
+  failed_when: false
