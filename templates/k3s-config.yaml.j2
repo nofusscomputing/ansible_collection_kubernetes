@@ -29,12 +29,19 @@
           "traefik"
         ],
         "disable-network-policy": true,
-        "etcd-snapshot-retention": kubernetes_etcd_snapshot_retention | int,
-        "etcd-snapshot-schedule-cron":  kubernetes_etcd_snapshot_cron_schedule | string,
         "flannel-backend": "none",
         "service-cidr": nfc_role_kubernetes_service_subnet
       }
     -%}
+
+    {%- if nfc_role_kubernetes_etcd_enabled -%}
+
+        {%- set servers_config = servers_config | combine({
+          "etcd-snapshot-retention": kubernetes_etcd_snapshot_retention | int,
+          "etcd-snapshot-schedule-cron":  kubernetes_etcd_snapshot_cron_schedule | string,
+        }) -%}
+
+    {%- endif -%}
 
     {%- if 
           kubernetes_config.cluster.domain_name | default(nfc_role_kubernetes_cluster_domain) is defined

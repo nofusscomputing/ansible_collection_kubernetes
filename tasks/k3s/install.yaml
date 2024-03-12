@@ -343,7 +343,7 @@
     cmd: |
       INSTALL_K3S_SKIP_DOWNLOAD=true \
       INSTALL_K3S_VERSION="v{{ KubernetesVersion }}{{ KubernetesVersion_k3s_prefix }}" \
-      /tmp/install.sh --cluster-init
+      /tmp/install.sh {% if nfc_role_kubernetes_etcd_enabled %}--cluster-init{% endif %}
   changed_when: false
   when: >
     kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
