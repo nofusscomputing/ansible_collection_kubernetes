@@ -28,7 +28,7 @@
 
       - src: kubernetes-manifest-rbac.yaml.j2
         dest: /var/lib/rancher/k3s/server/manifests/rbac-authorization-common.yaml
-        when: "{{ kubernetes_config.cluster.prime.name == inventory_hostname }}"
+        when: "{{ kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname }}"
 
       - src: iptables-kubernetes.rules.j2
         dest: "/etc/iptables.rules.d/iptables-kubernetes.rules"

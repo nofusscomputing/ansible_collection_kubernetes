@@ -3,14 +3,12 @@
 - name: Check for calico deployment manifest
   ansible.builtin.stat:
     name: /var/lib/rancher/k3s/server/manifests/calico.yaml
-  become: true
   register: file_calico_yaml_metadata
 
 
 - name: Check for calico Operator deployment manifest
   ansible.builtin.stat:
     name: /var/lib/rancher/k3s/ansible/deployment-manifest-calico_operator.yaml
-  become: true
   register: file_calico_operator_yaml_metadata
 
 
@@ -113,7 +111,6 @@
 - name: Check for Network Manager Directory
   ansible.builtin.stat:
     name: /etc/NetworkManager/conf.d
-  become: true
   register: directory_network_manager_metadata
 
 
@@ -133,7 +130,6 @@
     mode: '770'
     owner: root
     group: root
-  become: true
   diff: true
   when: directory_network_manager_metadata.stat.exists
 
@@ -159,7 +155,7 @@
   failed_when: false
   register: k3s_installed
   when: >
-    not Kubernetes_Master | default(false) | bool
+    not Kubernetes_worker | default(false) | bool
 
 
 - name: Check Machine Architecture
@@ -185,7 +181,7 @@
   when: >
     ansible_os_family == 'Debian'
       and
-    {{ item.when | default(true) | bool }}
+    item.when | default(true) | bool
   loop: "{{ download_files }}"
   vars:
     ansible_connection: local
@@ -246,7 +242,7 @@
   ansible.builtin.copy:
     src: "/tmp/k3s.{{ ansible_architecture }}"
     dest: "/usr/local/bin/k3s"
-    mode: '740'
+    mode: '741'
     owner: root
     group: root
   when: hash_sha256_k3s_existing_binary.stat.checksum | default('0') != hash_sha256_k3s_downloaded_binary
@@ -254,8 +250,8 @@
 
 - name: Copy install scripts to Host
   ansible.builtin.copy:
-    src: "{{ item }}"
-    dest: "{{ item }}"
+    src: "{{ item.path }}"
+    dest: "{{ item.path }}"
     mode: '755'
     owner: root
     group: root
@@ -267,7 +263,7 @@
       - path: "/tmp/install_olm.sh"
         when: "{{ nfc_role_kubernetes_install_olm }}"
   when: >
-    {{ item.when | default(true) | bool }}
+    item.when | default(true) | bool
 
 
 - name: Required Initial config files
@@ -305,7 +301,7 @@
         dest: /var/lib/rancher/k3s/server/manifests/calico.yaml
         when: >
           {{
-            kubernetes_config.cluster.prime.name == inventory_hostname
+            kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
               and
             (
               (
@@ -350,7 +346,7 @@
       /tmp/install.sh --cluster-init
   changed_when: false
   when: >
-    kubernetes_config.cluster.prime.name == inventory_hostname
+    kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
       and
     k3s_installed.rc == 1
 
@@ -374,7 +370,7 @@
       and
     'calico_manifest' not in ansible_run_tags
       and
-    kubernetes_config.cluster.prime.name == inventory_hostname
+    kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
 
 
 - name: Install MetalLB Operator
@@ -393,7 +389,7 @@
   when: >-
     nfc_kubernetes_enable_metallb | default(false) | bool
       and
-    kubernetes_config.cluster.prime.name == inventory_hostname
+    kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
 
 
 - name: Wait for kubernetes prime to be ready
@@ -407,7 +403,7 @@
         exit 127;
       fi
     executable: /bin/bash
-  delegate_to: "{{ kubernetes_config.cluster.prime.name }}"
+  delegate_to: "{{ kubernetes_config.cluster.prime.name | default(inventory_hostname) }}"
   run_once: true
   register: kubernetes_ready_check
   retries: 30
@@ -431,7 +427,7 @@
     install_olm.rc == 1
   register: install_olm
   when: >
-    kubernetes_config.cluster.prime.name == inventory_hostname
+    kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
       and
     nfc_role_kubernetes_install_olm | default(false) | bool
 
@@ -459,7 +455,7 @@
   failed_when: false
   register: install_olm
   when: >
-    kubernetes_config.cluster.prime.name == inventory_hostname
+    kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
       and
     'olm_uninstall' in ansible_run_tags
 
@@ -470,7 +466,7 @@
   changed_when: false
   failed_when: false    # New cluster will fail
   when: >
-    kubernetes_config.cluster.prime.name == inventory_hostname
+    kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
       and
     kubernetes_config.cluster.networking.encrypt | default(false) | bool
       and
@@ -488,7 +484,7 @@
 - name: Fetch Join Token
   ansible.builtin.slurp:
     src: /var/lib/rancher/k3s/server/token
-  delegate_to: "{{ kubernetes_config.cluster.prime.name }}"
+  delegate_to: "{{ kubernetes_config.cluster.prime.name | default(inventory_hostname) }}"
   run_once: true
   register: k3s_join_token
   no_log: true # Value is sensitive
@@ -497,7 +493,7 @@
 - name: Create Token fact
   ansible.builtin.set_fact:
     k3s_join_token: "{{ k3s_join_token.content | b64decode | replace('\n', '') }}"
-  delegate_to: "{{ kubernetes_config.cluster.prime.name }}"
+  delegate_to: "{{ kubernetes_config.cluster.prime.name | default(inventory_hostname) }}"
   run_once: true
   no_log: true # Value is sensitive
 
@@ -515,7 +511,7 @@
   when: >
     Kubernetes_Master | default(false) | bool
       and
-    not kubernetes_config.cluster.prime.name == inventory_hostname
+    not kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
       and
     k3s_installed.rc == 1
 
@@ -528,12 +524,14 @@
       INSTALL_K3S_SKIP_DOWNLOAD=true \
       INSTALL_K3S_VERSION="v{{ KubernetesVersion }}{{ KubernetesVersion_k3s_prefix }}" \
       K3S_TOKEN="{{ k3s_join_token }}" \
-      K3S_URL="https://{{ hostvars[kubernetes_config.cluster.prime.name].ansible_host }}:6443" \
+      K3S_URL="https://{{ hostvars[kubernetes_config.cluster.prime.name | default(inventory_hostname)].ansible_host }}:6443" \
       /tmp/install.sh -
     executable: /bin/bash
   changed_when: false
   when: >
     not Kubernetes_Master | default(false) | bool
+      and
+    not kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
       and
     k3s_installed.rc == 1
 

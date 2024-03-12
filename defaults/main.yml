@@ -16,16 +16,29 @@ nfc_kubernetes_tigera_operator_tag: v1.32.3               # Calico v3.27.0
 nfc_kubernetes_enable_metallb: false
 nfc_kubernetes_enable_servicelb: false
 
+
+
+nfc_role_kubernetes_cluster_domain: cluster.local
+
+nfc_role_kubernetes_etcd_enabled: false
+
 nfc_role_kubernetes_install_olm: false
 
+nfc_role_kubernetes_oidc_enabled: false
+
+nfc_role_kubernetes_pod_subnet: 172.16.248.0/21
+nfc_role_kubernetes_service_subnet: 172.16.244.0/22
+
+nfc_role_kubernetes_prime: true
+nfc_role_kubernetes_master: true
+nfc_role_kubernetes_worker: false
 
 ############################################################################################################
 #
 #                     Old Vars requiring refactoring
 #
 # ############################################################################################################
-# KubernetesPodSubnet: 10.85.0.0/16
-# KubernetesServiceSubnet: 10.86.0.0/16
+
 
 
 Kubernetes_Prime: false                                    # Optional, Boolean. Is the current host the Prime master?
@@ -74,7 +87,7 @@ k3s:
         kind: Policy
         rules:
         - level: Request
-      when: "{{ Kubernetes_Master | default(false) }}"
+      when: "{{ nfc_role_kubernetes_master }}"
 
     - name: 90-kubelet.conf
       path: /etc/sysctl.d
@@ -106,7 +119,7 @@ k3s:
         #       usernames: []
         #       runtimeClasses: []
         #       namespaces: [kube-system]
-      when: "{{ kubernetes_config.cluster.prime.name == inventory_hostname }}"
+      when: "{{ kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname }}"
 
 
 #############################################################################################
