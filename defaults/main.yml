@@ -34,9 +34,8 @@ KubernetesVersion: '1.26.2'                                # must match the repo
 kubernetes_version_olm: '0.26.0'
 
 
+                              
 
-
-KubernetesVersion_k8s_prefix: '-00'
 KubernetesVersion_k3s_prefix: '+k3s1'
 
 kubernetes_private_container_registry: []                  # Optional, Array. if none use `[]`

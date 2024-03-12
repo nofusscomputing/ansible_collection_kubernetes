@@ -20,19 +20,31 @@
     - install
 
 
-- name: K8s Cluster
-  ansible.builtin.include_tasks: k8s.yaml
-  when: kubernetes_type == 'k8s'
+# kubernetes_installed
+
+- name: K3s Install
+  ansible.builtin.include_tasks:
+    file: k3s/install.yaml
+    apply:
+      tags:
+        - always
+  when: >
+    install_kubernetes | default(true) | bool
+      and
+    not kubernetes_installed | default(false) | bool
   tags:
-    - never
-    - install
+    - always
 
 
-- name: K3s Cluster
-  ansible.builtin.include_tasks: k3s.yaml
-  when: kubernetes_type == 'k3s'
+- name: K3s Configure
+  ansible.builtin.include_tasks:
+    file: k3s/configure.yaml
+    apply:
+      tags:
+        - always
+  when: >
+    install_kubernetes | default(true) | bool
+      and
+    kubernetes_installed | default(false) | bool
   tags:
-    - never
-    - install
-    - operator_calico
-    - operator_migrate_calico
+    - always
