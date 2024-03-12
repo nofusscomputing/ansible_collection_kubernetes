@@ -6,7 +6,7 @@ template: project.html
 about: https://gitlab.com/nofusscomputing/projects/ansible/roles/kubernetes
 ---
 
-This Ansible role is designed to deploy a K3s Kubernetes cluster. After adding your configuration, the cluster will deploy and have a configured CNI (calico) and be in a state ready to use. This role can be used with our [our playbooks](../../playbooks/index.md) or comes included, along with the playbook within our [Ansible Execution Environment](../../execution_environment/index.md).
+This Ansible role is designed to deploy a K3s Kubernetes cluster. Without adding cluster configuration this role will install K3s as a single node cluster. To deploy a multi-node cluster add your configuration, K3s will be installed on all nodes. On completion you will have fully configured cluster in a state ready to use. This role can be used with our [our playbooks](../../playbooks/index.md) or comes included, along with the playbook within our [Ansible Execution Environment](../../execution_environment/index.md).
 
 
 ## Features
@@ -17,9 +17,11 @@ This Ansible role is designed to deploy a K3s Kubernetes cluster. After adding y
 
     - Container Registries
 
-    - etcd snapshot cron schedule
+    - ectd deployment
+    
+        - etcd snapshot cron schedule
 
-    - etcd snapshot retention
+        - etcd snapshot retention
     
     - Cluster Domain
 
