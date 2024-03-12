@@ -14,6 +14,11 @@
     msg: The hostname must match the inventory_hostname
 
 
+- name: Check Machine Architecture
+  ansible.builtin.set_fact:
+    nfc_kubernetes_install_architectures: "{{ nfc_kubernetes_install_architectures | default({}) | combine({ansible_architecture: ''}) }}"
+
+
 - name: Firewall Rules
   ansible.builtin.include_role:
     name: nfc_firewall

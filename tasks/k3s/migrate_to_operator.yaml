@@ -127,7 +127,7 @@
         owner: root
         group: 'root'
       become: true
-      when: inventory_hostname in groups['kubernetes_master']
+      when: nfc_role_kubernetes_master
 
 
     - name: Setup Automagic Host Endpoints

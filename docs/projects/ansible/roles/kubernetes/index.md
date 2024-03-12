@@ -11,7 +11,9 @@ This Ansible role is designed to deploy a K3s Kubernetes cluster. Without adding
 
 ## Features
 
-- CNI Setup
+- CNI Setup, calico including `calicoctl` plugin
+
+    > `kubectl calico ....` instead of `calicoctl ....`
 
 - Configurable:
 
@@ -49,7 +51,9 @@ This Ansible role is designed to deploy a K3s Kubernetes cluster. Without adding
 
 - Install MetalLB
 
-- Install KubeVirt
+- Install KubeVirt including `virtctl` plugin
+
+    > `kubectl virt ....` instead of `virtctl ....`
 
 
 ## Role Workflow

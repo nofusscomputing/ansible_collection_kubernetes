@@ -158,11 +158,6 @@
     not nfc_role_kubernetes_worker | default(false) | bool
 
 
-- name: Check Machine Architecture
-  ansible.builtin.set_fact:
-    nfc_kubernetes_install_architectures: "{{ nfc_kubernetes_install_architectures | default({}) | combine({ansible_architecture: ''}) }}"
-
-
 - name: Download Install Scripts
   ansible.builtin.uri:
     url: "{{ item.url }}"
@@ -541,4 +536,3 @@
     kubernetes_installed: true
     # Clear Token as no llonger required and due to being a sensitive value
     k3s_join_token: null
-    nfc_kubernetes_install_architectures: {}
