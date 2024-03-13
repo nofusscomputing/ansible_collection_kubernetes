@@ -44,6 +44,7 @@ tags:
 # L(specifiers,https://python-semanticversion.readthedocs.io/en/latest/#requirement-specification). Multiple version
 # range specifiers can be set and are separated by ','
 dependencies:
+  ansible.posix: '1.5.4'
   kubernetes.core: '3.0.0'
 
 
