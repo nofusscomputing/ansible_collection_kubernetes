@@ -32,11 +32,31 @@ To install this collection use `ansible-galaxy collection install nofusscomputin
 Most of the features of this collection are from the included role `nfc_kubernetes`, please [view its page for feature details](roles/nfc_kubernetes/index.md).
 
 
-## Default Variables
+## Using this collection
 
+This collection has been designed to be a complete and self-contained management tool for a K3s kubernetes cluster.
 
-``` yaml title="defaults/main.yaml" linenums="1"
+## K3s Kubernetes Installation
 
---8<-- "defaults/main.yml"
+By default the install playbook will install to localhost.
+
+``` bash
+
+ansible-playbook nofusscomputing.kubernetes.install
 
 ```
+
+The install playbook has a dynamic `hosts` key. This has been done to specifically support running the playbook from AWX and being able to populate the field from the survey feature. Order of precedence for the host variable is as follows:
+
+- `nfc_pb_host` set to any valid value that a playbook `hosts` key can accept
+
+- `nfc_pb_kubernetes_cluster_name` with the name of the cluster. This variable is appended to string `kubernetes_cluster_` to serve as a group name for the cluster to be installed. i.e. for a cluster called `prime`, the group name would be set to `kubernetes_cluster_prime`
+
+- `--limit` specified at runtime
+
+- `localhost`
+
+For the available variables please view the [nfc_kubernetes role docs](roles/nfc_kubernetes/index.md#default-variables)
+
+
+
