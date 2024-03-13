@@ -1,3 +1,9 @@
+## 1.1.0 (2024-03-13)
+
+### Feat
+
+- add role readme and fix gitlab release job
+
 ## 1.0.1 (2024-03-13)
 
 ### Fix
@@ -33,8 +39,6 @@
 - **kubevirt**: optionally specify which nodes within a cluster to install kubeviirt
 - **kubevirt**: Default to live migration for update strategy
 - Optionally Install KubeVirt
-- **install**: dont allow installation to continue if the hostname does not match inventory_hostname
-- **variables**: remove depreciated variables
 
 ### Fix
 
@@ -53,16 +57,12 @@
 - **config**: for server self. use internal ip to connect instead of external
 - **config**: dont set external-ip if it matches node-ip
 - **config**: set value `node-ip`
-- **calico**: use vxlan instead of ipip
 - **install**: enable k3s module metrics-server
 - **olm**: dont install by default
 - **calico**: disable vxlan
-- **calico**: use vxlan overlay
 - **calico**: IP AUTO-detection set to kubernetes-internal-ip
 - feature gate added to prevent restart of kubernetes service
 - **node**: ability to configure node taints
-- **config**: set node name to inventory_hostname
-- **firewall**: add vxlan rules
 
 ### Fix
 
@@ -73,10 +73,7 @@
 - **token_fetch**: only fetch token after prime installed
 - **handler**: kubernetes restart when clause corrected
 - **audit_log**: max age not backup
-- **config**: ensure server var is list not csv string
 
 ### Refactor
 
-- **config**: use jinja to construct data then pretty print it
 - **tasks**: ensure module FQCN is used
-- **node_labels**: removed from config.yaml and set to be a manifest on prime node
