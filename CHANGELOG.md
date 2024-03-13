@@ -1,3 +1,9 @@
+## 1.0.1 (2024-03-13)
+
+### Fix
+
+- **ci**: ensure correct package name is used
+
 ## 1.0.0 (2024-03-13)
 
 ### BREAKING CHANGE
@@ -29,12 +35,10 @@
 - Optionally Install KubeVirt
 - **install**: dont allow installation to continue if the hostname does not match inventory_hostname
 - **variables**: remove depreciated variables
-- **install**: etcd deployment now optional
 
 ### Fix
 
 - remove depreciated worker var
-- **configure**: if firewall rules dir does not exist, dont add firewall rules
 
 ### Refactor
 
@@ -50,8 +54,6 @@
 - **config**: dont set external-ip if it matches node-ip
 - **config**: set value `node-ip`
 - **calico**: use vxlan instead of ipip
-- **olm**: uninstall olm if tag `olm_uninstall` specified
-- **calico**: add job tag calico_manifest to enable rollback
 - **install**: enable k3s module metrics-server
 - **olm**: dont install by default
 - **calico**: disable vxlan
@@ -61,8 +63,6 @@
 - **node**: ability to configure node taints
 - **config**: set node name to inventory_hostname
 - **firewall**: add vxlan rules
-- **audit_logs**: keep two days by default
-- **firewall**: allow hosts external IP
 
 ### Fix
 
@@ -74,11 +74,6 @@
 - **handler**: kubernetes restart when clause corrected
 - **audit_log**: max age not backup
 - **config**: ensure server var is list not csv string
-- **handler**: restart kubernetes implementation was flawed
-- **config**: ensure join token is included in config
-- **k3s_multi_master**: adjusted config so multi-master install works
-- **olm**: dont fail if already installed
-- **config**: ensure config option servicelb-namespace only deployed to prime node
 
 ### Refactor
 
