@@ -32,6 +32,8 @@ nfc_role_kubernetes_etcd_enabled: false
 
 nfc_role_kubernetes_install_olm: false
 
+nfc_role_kubernetes_install_helm: true
+
 nfc_role_kubernetes_install_kubevirt: false
 
 nfc_role_kubernetes_kubevirt_operator_replicas: 1
@@ -149,6 +151,10 @@ k3s:
 #       encrypt: true                   # Optional, Boolean. default `false`. Install wireguard for inter-node encryption
 #       podSubnet: 172.16.70.0/24       # Mandatory, String. CIDR
 #       ServiceSubnet: 172.16.72.0/24   # Mandatory, String. CIDR
+#
+#
+#  helm:
+#    enabled: true       # Optional, Boolean. default=false. Install Helm Binary
 #
 #
 #  kube_virt:

@@ -83,3 +83,19 @@
     inventory_hostname in kubernetes_config.kube_virt.nodes | default([ inventory_hostname ]) | list
   tags:
     - always
+
+
+- name: Helm
+  ansible.builtin.include_tasks:
+    file: helm/main.yaml
+    apply:
+      tags:
+        - always
+  when: >
+    kubernetes_installed | default(false) | bool
+      and
+    kubernetes_config.helm.enabled | default(nfc_role_kubernetes_install_helm)
+      and
+    nfc_role_kubernetes_master
+  tags:
+    - always
