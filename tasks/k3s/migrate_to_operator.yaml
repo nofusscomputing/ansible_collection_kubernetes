@@ -96,7 +96,7 @@
     - name: Fetch Calico Kubectl Plugin
       ansible.builtin.uri:
         url: |-
-          https://github.com/projectcalico/calico/releases/download/{{ nfc_kubernetes_calico_version }}/calicoctl-linux-
+          https://github.com/projectcalico/calico/releases/download/{{ nfc_role_kubernetes_calico_version }}/calicoctl-linux-
           {%- if cpu_arch.key == 'aarch64' -%}
             arm64
           {%- else -%}

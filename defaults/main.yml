@@ -6,10 +6,10 @@
 calico_image_tag: v3.25.0 # Depreciated
 # EoF Depreciated
 # SoF New Variables
-nfc_kubernetes_calico_version: v3.27.0
-nfc_kubernetes_tigera_operator_registry: quay.io
-nfc_kubernetes_tigera_operator_image: tigera/operator
-nfc_kubernetes_tigera_operator_tag: v1.32.3               # Calico v3.27.0
+nfc_role_kubernetes_calico_version: v3.27.0
+# nfc_kubernetes_tigera_operator_registry: quay.io
+# nfc_kubernetes_tigera_operator_image: tigera/operator
+# nfc_kubernetes_tigera_operator_tag: v1.32.3               # Calico v3.27.0
 # EoF New Variables, EEoF Depreciated
 
 
@@ -24,6 +24,12 @@ nfc_role_kubernetes_container_images:
     registry: quay.io
     image: kubevirt/virt-operator
     tag: v1.2.0
+
+  tigera_operator:
+    name: Tigera Operator
+    registry: quay.io
+    image: tigera/operator
+    tag: v1.32.3    # Calico v3.27.0
 
 
 nfc_role_kubernetes_cluster_domain: cluster.local
