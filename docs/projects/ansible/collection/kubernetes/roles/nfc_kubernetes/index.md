@@ -3,10 +3,10 @@ title: Kubernetes
 description: No Fuss Computings Ansible role nfc_kubernetes
 date: 2023-10-24
 template: project.html
-about: https://gitlab.com/nofusscomputing/projects/ansible/roles/kubernetes
+about: https://gitlab.com/nofusscomputing/projects/ansible/collections/kubernetes
 ---
 
-This Ansible role is designed to deploy a K3s Kubernetes cluster. Without adding cluster configuration this role will install K3s as a single node cluster. To deploy a multi-node cluster add your configuration, K3s will be installed on all nodes. On completion you will have fully configured cluster in a state ready to use. This role can be used with our [our playbooks](../../playbooks/index.md) or comes included, along with the playbook within our [Ansible Execution Environment](../../execution_environment/index.md).
+This Ansible role is designed to deploy a K3s Kubernetes cluster. Without adding cluster configuration this role will install K3s as a single node cluster. To deploy a multi-node cluster add your configuration, K3s will be installed on all nodes. On completion you will have fully configured cluster in a state ready to use. This role can be used with our [our playbooks](../../../../playbooks/index.md) or comes included, along with the playbook within our [Ansible Execution Environment](../../../../execution_environment/index.md).
 
 
 ## Role Details
