@@ -1,3 +1,16 @@
+## 1.1.2 (2024-03-13)
+
+### Fix
+
+- **readme**: update gitlab links to new loc
+- **configure**: dont attempt to configure firewall if install=false
+- **handler**: remove old k8s code causing handler to fail
+- **handler**: kubernetes restart handler now using updated node type vars
+- **config**: if hostname=localhost use hostname command to fetch hostname
+- limit the use of master group
+- add missing dependency ansible.posix
+- **install**: use correct var type for packages
+
 ## 1.1.1 (2024-03-13)
 
 ### Fix
@@ -43,11 +56,6 @@
 - disable node ipv6 support
 - **kubevirt**: install virtctl plugin
 - **kubevirt**: optionally specify which nodes within a cluster to install kubeviirt
-- **kubevirt**: Default to live migration for update strategy
-
-### Fix
-
-- remove depreciated worker var
 
 ### Refactor
 
