@@ -7,7 +7,7 @@
 #
 
 {%- if 
-  inventory_hostname in groups['kubernetes_master']
+  nfc_role_kubernetes_master
     or
   kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
 -%}
@@ -149,7 +149,7 @@
 
     {%- for cluster_node in groups[kubernetes_config.cluster.group_name] -%}
 
-      {%- if cluster_node in groups['kubernetes_master'] -%}
+      {%- if cluster_node in groups['kubernetes_master'] | default([]) -%}
 
         {%- if hostvars[cluster_node].host_external_ip is defined -%}
 
@@ -228,7 +228,7 @@
 
 
 {%- if 
-  inventory_hostname in groups['kubernetes_master']
+  nfc_role_kubernetes_master
     or
   kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
 -%}
