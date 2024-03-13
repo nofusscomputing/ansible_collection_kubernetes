@@ -18,7 +18,7 @@
   ansible.builtin.service:
     name: |-
       {%- if kubernetes_type == 'k3s' -%}
-        {%- if Kubernetes_Master | default(false) | bool -%}
+        {%- if nfc_role_kubernetes_master | default(false) | bool -%}
           k3s
         {%- else -%}
           k3s-agent
@@ -33,19 +33,19 @@
       nfc_kubernetes_no_restart
         or
       (
-        inventory_hostname in groups['kubernetes_master']
+        nfc_role_kubernetes_master
           and
         nfc_kubernetes_no_restart_master
       )
         or
       (
-        inventory_hostname == kubernetes_config.cluster.prime.name
+        inventory_hostname == kubernetes_config.cluster.prime.name | default(inventory_hostname)
           and
         nfc_kubernetes_no_restart_prime
       )
         or
       (
-        inventory_hostname in groups['kubernetes_worker']
+        nfc_role_kubernetes_worker
           and
         nfc_kubernetes_no_restart_slave
       )
