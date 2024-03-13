@@ -107,6 +107,8 @@ If the playbook is setup as per [our recommendation](ansible.md) step 2 onwards 
 
 ## Default Variables
 
+On viewing these variables you will notice there are single dictionary keys prefixed `nfc_role_kubernetes_` and a dictionary of dictionaries `kubernetes_config`. variables prefixed with `nfc_role_kubernetes_` are for single node installs with the `kubernetes_config` dictionary containing all of the information for an entire cluster. The `kubernetes_config` dictionary variables take precedence. Even if you are installing a cluster on multiple nodes, you are still advised to review the variables prefixed with `nfc_role_kubernetes_` as they may still be needed. i.e. setting a node type use keys `nfc_role_kubernetes_prime`, `nfc_role_kubernetes_master` and `nfc_role_kubernetes_worker`.
+
 
 ``` yaml title="defaults/main.yaml" linenums="1"
 
