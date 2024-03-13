@@ -19,6 +19,5 @@ galaxy_info:
 
   galaxy_tags:
     - k3s
-    - k8s
     - kubernetes
     - container
