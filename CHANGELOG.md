@@ -1,3 +1,36 @@
+## 0.3.0 (2024-03-13)
+
+### Bug Fixes
+
+- [cb5a5697](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/cb5a5697c11a9420be51292ca0db8370b512ea25) - remove depreciated worker var [ [!35](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/35) ]
+- **configure**: [83ddfd4f](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/83ddfd4fbf54fa3febca5d3c8f740be4c5ed74b0) - if firewall rules dir does not exist, dont add firewall rules [ [!35](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/35) ]
+- **install**: [c7a3e617](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/c7a3e617f00b36d74a6d7183d48a0e61198b5081) - installed check is different for master/slave [ [!35](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/35) ]
+
+### Code Refactor
+
+- [826468fc](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/826468fc42182ceca50fe7be3f9cc49532136e35) - image var update for calico [ [!35](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/35) ]
+
+### Documentaton / Guides
+
+- [6a10eb22](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/6a10eb22ccc0a8531858e67c8de030d80e7fc303) - update index [ [!35](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/35) ]
+- [aca7e557](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/aca7e557a6a7394af581e7ca0f73d632f947ff68) - update latest feat changes [ [!35](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/35) ]
+
+### Features
+
+- [164b59c1](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/164b59c100977c3cbac860b8239daca893bdc5e5) - remove old var and update kube version [ [!35](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/35) ]
+- [29a9e696](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/29a9e696a9d4734e1e60925a3f7d54a47c3b5127) - install helm binary [ [!35](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/35) ]
+- [43c6c940](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/43c6c940a1c03806681e137c7178ffb26476369a) - disable node ipv6 support [ [!35](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/35) ]
+- **kubevirt**: [9d5a0783](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/9d5a0783203f22bbb95bd242424e20e6abc27a29) - install virtctl plugin [ [!35](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/35) ]
+- **kubevirt**: [2b041c1c](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/2b041c1cca854ac018f65b1de02aa56ca774043c) - optionally specify which nodes within a cluster to install kubeviirt [ [!35](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/35) ]
+- **kubevirt**: [af265594](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/af265594851542b00e3e09449e25d5fa1aca79b4) - Default to live migration for update strategy [ [!35](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/35) ]
+- [c7a5c7c7](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/c7a5c7c7e37ea11be19dfa6f6b1a04e6b5974192) - Optionally Install KubeVirt [ [!35](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/35) ]
+- **install**: [f1d20aac](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/f1d20aac806be2d3fb267ff4b0366f7852b698c3) - dont allow installation to continue if the hostname does not match inventory_hostname [ [!35](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/35) ]
+- **variables**: [3b760db6](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/3b760db6e76a41bdf26a4770c80d0a54898d2873) - remove depreciated variables [ [!35](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/35) ]
+- **install**: [967829d9](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/967829d9e42debc5a97d105d31ab449baebc1b76) - etcd deployment now optional [ [!35](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/35) ]
+- [56ac6eb3](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/56ac6eb3b4baea7e49fd234250e31736f2f624f9) - By default conduct single node install [ [!35](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/35) ]
+- **install**: [283568f7](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/283568f72a6ee625c5453c91efdece13cb106cb3) - OLM install now optional default=false [ [!35](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/35) ]
+- **k8s**: [21d0dbef](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/commit/21d0dbefa95f70e3b97c4eb10db1cc1b051a8c1c) - remove k8s cluster install [ [!35](https://gitlab.com/nofusscomputing/projects/ansible/kubernetes/-/merge_requests/35) ]
+
 ## 0.2.0 (2024-02-03)
 
 ### Bug Fixes
