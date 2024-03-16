@@ -1,3 +1,13 @@
+## 1.2.0 (2024-03-16)
+
+### Feat
+
+- **firewall**: use collection nofusscomputing.firewall to configure kubernetes firewall
+
+### Fix
+
+- **config**: use correct var name when setting node name
+
 ## 1.1.2 (2024-03-13)
 
 ### Fix
@@ -55,7 +65,6 @@
 - install helm binary
 - disable node ipv6 support
 - **kubevirt**: install virtctl plugin
-- **kubevirt**: optionally specify which nodes within a cluster to install kubeviirt
 
 ### Refactor
 
