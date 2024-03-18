@@ -149,8 +149,13 @@
 
       {#- All cluster Hosts -#}
 
-
-      {%- if nfc_role_kubernetes_master | default(false) | bool -%}
+      {%- if 
+        nfc_role_kubernetes_master | default(false) | bool
+          and
+        kubernetes_host not in groups['kubernetes_master']
+          and
+        '-I kubernetes-api -s ' + kubernetes_host + ' -j ACCEPT' not in data.firewall_rules
+      -%}
 
         {%- set data.firewall_rules = data.firewall_rules + ['-I kubernetes-api -s ' + kubernetes_host + ' -j ACCEPT'] -%}
 
