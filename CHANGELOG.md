@@ -1,3 +1,15 @@
+## 1.3.0 (2024-03-18)
+
+### Feat
+
+- dont attempt to install if already installed
+
+### Fix
+
+- **handler**: add missing 'reboot_host' handler
+- **firewall**: ensure slave nodes can access ALL masters API point
+- **firewall**: dont add rules for disabled features
+
 ## 1.2.0 (2024-03-16)
 
 ### Feat
@@ -41,14 +53,9 @@
 
 ## 1.0.0 (2024-03-13)
 
-### BREAKING CHANGE
-
-- Repository restructure from Ansible Role to Ansible Collection
-
 ### Feat
 
 - **playbook**: add the install playbook
-- restructure repository as ansible collection
 
 ### Refactor
 
@@ -63,8 +70,6 @@
 
 - remove old var and update kube version
 - install helm binary
-- disable node ipv6 support
-- **kubevirt**: install virtctl plugin
 
 ### Refactor
 
