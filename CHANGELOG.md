@@ -1,3 +1,9 @@
+## 1.4.0 (2024-03-20)
+
+### Feat
+
+- **install**: "ansible_check_mode=true" no hostname check
+
 ## 1.3.0 (2024-03-18)
 
 ### Feat
@@ -62,14 +68,12 @@
 - **nfc_kubernetes**: update meta file
 - remove dependency on role nfc_common
 - **nfc_kubernetes**: layout role ingress to install prime -> master -> worker nodes as separate groups
-- **docs**: restructure docs
 
 ## 0.3.0 (2024-03-13)
 
 ### Feat
 
 - remove old var and update kube version
-- install helm binary
 
 ### Refactor
 
