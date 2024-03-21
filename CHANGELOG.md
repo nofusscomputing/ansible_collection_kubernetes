@@ -1,3 +1,9 @@
+## 1.5.0 (2024-03-21)
+
+### Feat
+
+- **collection**: nofusscomputing.firewall update 1.0.1 -> 1.1.0
+
 ## 1.4.0 (2024-03-20)
 
 ### Feat
@@ -59,22 +65,9 @@
 
 ## 1.0.0 (2024-03-13)
 
-### Feat
-
-- **playbook**: add the install playbook
-
 ### Refactor
 
 - **nfc_kubernetes**: update meta file
 - remove dependency on role nfc_common
-- **nfc_kubernetes**: layout role ingress to install prime -> master -> worker nodes as separate groups
 
 ## 0.3.0 (2024-03-13)
-
-### Feat
-
-- remove old var and update kube version
-
-### Refactor
-
-- image var update for calico
