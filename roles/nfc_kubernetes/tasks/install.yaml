@@ -35,6 +35,19 @@
     nfc_role_kubernetes_configure_firewall
 
 
+- name: Install required software
+  ansible.builtin.apt:
+    name: python3-pip
+    install_recommends: false
+    state: present
+  when: >
+    install_kubernetes | default(true) | bool
+      and
+    not kubernetes_installed | default(false) | bool
+  tags:
+    - always
+
+
 - name: K3s Install
   ansible.builtin.include_tasks:
     file: k3s/install.yaml
