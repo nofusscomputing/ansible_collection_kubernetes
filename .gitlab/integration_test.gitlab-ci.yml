@@ -84,7 +84,7 @@
       mkdir -p test_results;
       cat <<EOF > test_results/${test_image}.json
       {
-        "$( echo ${test_image}  | sed -e 's/\./_/')": "passed"
+        "$( echo ${test_image}  | sed -e 's/\./_/')": "Pass"
       }
 
       EOF
@@ -99,7 +99,7 @@
 
       cat <<EOF > test_results/${test_image}.json
       {
-        "$( echo ${test_image}  | sed -e 's/\./_/')": "fail"
+        "$( echo ${test_image}  | sed -e 's/\./_/')": "Fail"
       }
 
       EOF
