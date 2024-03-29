@@ -29,14 +29,20 @@ To install this collection use `ansible-galaxy collection install nofusscomputin
 
 ## Features
 
-Most of the features of this collection are from the included role `nfc_kubernetes`, please [view its page for feature details](roles/nfc_kubernetes/index.md).
+- Install k3s cluster. Both Single and multi-node clusters
+
+- Configure the cluster
+
+- Upgrade a cluster
+
+For a more detailed list of featured checkout the roles [documentation](roles/nfc_kubernetes/index.md).
 
 
 ## Using this collection
 
 This collection has been designed to be a complete and self-contained management tool for a K3s kubernetes cluster.
 
-## K3s Kubernetes Installation
+## Cluster Installation
 
 By default the install playbook will install to localhost.
 
@@ -64,4 +70,9 @@ The install playbook has a dynamic `hosts` key. This has been done to specifical
 For the available variables please view the [nfc_kubernetes role docs](roles/nfc_kubernetes/index.md#default-variables)
 
 
+## Cluster Upgrade
 
+[In place cluster upgrades](https://docs.k3s.io/upgrades/manual#upgrade-k3s-using-the-binary) is the method used to conduct the cluster upgrades. The logic for the upgrades first confirms that K3s is installed and that the local binary and running k3s version are the desired versions. If they are not, they will be updated to the desired version. On completion of this the node has its `k3s` service restarted which completes the upgrade process.
+
+!!! danger
+    not following the [Kubernetes version skew policy](https://kubernetes.io/releases/version-skew-policy/) when upgrading your cluster may break your cluster.
