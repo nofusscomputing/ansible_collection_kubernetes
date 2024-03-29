@@ -18,6 +18,15 @@
     not ansible_check_mode
 
 
+- name: Testing Env Variables
+  ansible.builtin.set_fact:
+    ansible_default_ipv4: {
+      "address": "127.0.0.1"
+    }
+  when: >
+    lookup('ansible.builtin.env', 'CI_COMMIT_SHA') | default('') != ''
+
+
 - name: Check Machine Architecture
   ansible.builtin.set_fact:
     nfc_kubernetes_install_architectures: "{{ nfc_kubernetes_install_architectures | default({}) | combine({ansible_architecture: ''}) }}"
@@ -33,6 +42,19 @@
     - always
   when: >
     nfc_role_kubernetes_configure_firewall
+
+
+- name: Install required software
+  ansible.builtin.apt:
+    name: python3-pip
+    install_recommends: false
+    state: present
+  when: >
+    install_kubernetes | default(true) | bool
+      and
+    not kubernetes_installed | default(false) | bool
+  tags:
+    - always
 
 
 - name: K3s Install
@@ -59,6 +81,8 @@
     install_kubernetes | default(true) | bool
       and
     kubernetes_installed | default(false) | bool
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
   tags:
     - always
 
@@ -75,6 +99,8 @@
     kubernetes_config.kube_virt.enabled | default(nfc_role_kubernetes_install_kubevirt)
       and
     inventory_hostname in kubernetes_config.kube_virt.nodes | default([ inventory_hostname ]) | list
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
   tags:
     - always
 
@@ -91,5 +117,7 @@
     kubernetes_config.helm.enabled | default(nfc_role_kubernetes_install_helm)
       and
     nfc_role_kubernetes_master
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
   tags:
     - always

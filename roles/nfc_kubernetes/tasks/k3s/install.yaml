@@ -1,5 +1,16 @@
 ---
 
+- name: Install required python modules
+  ansible.builtin.pip:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ pip_packages }}"
+  vars:
+    pip_packages:
+      - kubernetes>=12.0.0
+      - PyYAML>=3.11
+
+
 - name: Check for calico deployment manifest
   ansible.builtin.stat:
     name: /var/lib/rancher/k3s/server/manifests/calico.yaml
@@ -21,6 +32,7 @@
     loop_var: package
   vars:
     packages:
+      - wget
       - curl
       - iptables
       - jq
@@ -41,14 +53,29 @@
     - install
 
 
-- name: Disable swap
-  ansible.builtin.command:
-    cmd: swapoff -a
-  changed_when: false
-  when:
-    - ansible_os_family == 'Debian'
-  tags:
-    - install
+- name: Testing Environment try/catch
+  block:
+
+
+    - name: Disable swap
+      ansible.builtin.command:
+        cmd: swapoff -a
+      changed_when: false
+      when:
+        - ansible_os_family == 'Debian'
+      tags:
+        - install
+
+
+  rescue:
+
+    - name: Check if inside Gitlab CI
+      ansible.builtin.assert:
+        that:
+          - lookup('ansible.builtin.env', 'CI_COMMIT_SHA') | default('') != ''
+        success_msg: "Inside testing enviroment, 'Disable swap' error OK"
+        fail_msg: "You should figure out what went wrong"
+
 
 - name: Check an armbian os system
   ansible.builtin.stat:
@@ -138,28 +165,218 @@
   when: directory_network_manager_metadata.stat.exists
 
 
-- name: Check if K3s Installed
+- name: File Metadata - k3s binary
+  ansible.builtin.stat:
+    checksum_algorithm: sha256
+    name: /usr/local/bin/k3s
+  register: metadata_file_k3s_existing_binary
+
+
+- name: File Metadata - k3s[-agent].service
+  ansible.builtin.stat:
+    checksum_algorithm: sha256
+    name: |-
+      /etc/systemd/system/k3s
+      {%- if not nfc_role_kubernetes_master | default(false) | bool -%}
+        -agent
+      {%- endif -%}
+      .service
+  register: metadata_file_k3s_service
+
+
+- name: Directory Metadata - /etc/rancher/k3s/k3s.yaml
+  ansible.builtin.stat:
+    name: /etc/rancher/k3s/k3s.yaml
+  register: metadata_dir_etc_k3s
+
+
+- name: File Metadata - /var/lib/rancher/k3s/server/token
+  ansible.builtin.stat:
+    checksum_algorithm: sha256
+    name: /var/lib/rancher/k3s/server/token
+  register: metadata_file_var_k3s_token
+
+
+- name: Config Link
   ansible.builtin.shell:
-    cmd: |
-      if [[ $(service k3s status) ]]; then exit 0; else exit 1; fi
-    executable: /bin/bash
-  changed_when: false
-  failed_when: false
-  register: k3s_installed
+    cmd: >
+      ln -s /etc/rancher/k3s/k3s.yaml ~/.kube/config
+    executable: bash
+    creates: ~/.kube/config
   when: >
     nfc_role_kubernetes_master | default(false) | bool
+      and
+    metadata_dir_etc_k3s.stat.exists | default(false) | bool
 
 
-- name: Check if K3s Installed
+- name: Fetch Kubernetes Node Object
+  kubernetes.core.k8s_info:
+    kind: Node
+    name: "{{ inventory_hostname }}"
+  register: kubernetes_node
+  when: >
+    metadata_file_k3s_existing_binary.stat.exists | default(false) | bool
+      and
+    metadata_file_k3s_service.stat.exists | default(false) | bool
+      and
+    metadata_dir_etc_k3s.stat.exists | default(false) | bool
+      and
+    metadata_file_var_k3s_token.stat.exists | default(false) | bool
+
+
+- name: Fetch Installed K3s Metadata
   ansible.builtin.shell:
     cmd: |
-      if [[ $(service k3s-agent status) ]]; then exit 0; else exit 1; fi
+      export installed_version=$(k3s --version | grep k3s | awk '{print $3}');
+      export installed="
+      {%- if
+        metadata_file_k3s_existing_binary.stat.exists | default(false) | bool
+          and
+        metadata_file_k3s_service.stat.exists | default(false) | bool
+          and
+        metadata_dir_etc_k3s.stat.exists | default(false) | bool
+          and
+        metadata_file_var_k3s_token.stat.exists | default(false) | bool
+      -%}
+        true
+      {%- else -%}
+        false
+      {%- endif -%}";
+
+      export running_version="{{ kubernetes_node.resources[0].status.nodeInfo.kubeletVersion | default('0') }}";
+
+      export correct_hash=$(wget -q https://github.com/k3s-io/k3s/releases/download/v
+        {{-KubernetesVersion + KubernetesVersion_k3s_prefix | urlencode -}}
+          /sha256sum-
+          {%- if ansible_architecture | lower == 'x86_64' -%}
+            amd64
+          {%- elif ansible_architecture | lower == 'aarch64' -%}
+            arm64
+          {%- endif %}.txt -O - | grep -v 'images' | awk '{print $1}');
+
+      cat <<EOF
+      {
+        "current_hash": "{{ metadata_file_k3s_existing_binary.stat.checksum | default('') }}",
+        "current_version": "${installed_version}",
+        "desired_hash": "${correct_hash}",
+        "desired_version": "v{{ KubernetesVersion + KubernetesVersion_k3s_prefix | default('') }}",
+        "installed": ${installed},
+        "running_version": "${running_version}"
+      }
+
+      EOF
+
     executable: /bin/bash
   changed_when: false
   failed_when: false
-  register: k3s_installed
+  register: k3s_metadata
+
+
+- name: K3s Metadata Fact
+  ansible.builtin.set_fact:
+    node_k3s: "{{ k3s_metadata.stdout | from_yaml }}"
+
+
+- name: Cached K3s Binary Details
+  ansible.builtin.stat:
+    path: "/tmp/k3s.{{ ansible_architecture }}"
+    checksum_algorithm: sha256
+  delegate_to: localhost
+  register: file_cached_k3s_binary
+  vars:
+    ansible_connection: local
+
+
+- name: Remove Cached K3s Binaries
+  ansible.builtin.file:
+    path: "/tmp/k3s.{{ ansible_architecture }}"
+    state: absent
+  delegate_to: localhost
+  vars:
+    ansible_connection: local
   when: >
-    not nfc_role_kubernetes_worker | default(false) | bool
+    file_cached_k3s_binary.stat.checksum | default('0') != node_k3s.desired_hash
+
+
+- name: Download K3s Binary
+  ansible.builtin.uri:
+    url: |-
+      https://github.com/k3s-io/k3s/releases/download/
+        {{- node_k3s.desired_version | urlencode -}}
+      /k3s
+      {%- if cpu_arch.key == 'aarch64' -%}
+      -arm64
+      {%- endif %}
+    method: GET
+    return_content: false
+    status_code:
+      - 200
+      - 304
+    dest: "/tmp/k3s.{{ cpu_arch.key }}"
+    mode: "744"
+  delay: 10
+  retries: 3
+  register: k3s_download_files
+  delegate_to: localhost
+  failed_when: >
+    (lookup('ansible.builtin.file', '/tmp/k3s.' + cpu_arch.key) | hash('sha256') | string) != node_k3s.desired_hash
+      and
+    (
+      k3s_download_files.status | int != 200
+        or
+      k3s_download_files.status | int != 304
+    )
+  run_once: true
+  when: ansible_os_family == 'Debian'
+  loop: "{{ nfc_kubernetes_install_architectures | dict2items }}"
+  loop_control:
+    loop_var: cpu_arch
+  vars:
+    ansible_connection: local
+
+
+- name: Copy K3s binary to Host
+  ansible.builtin.copy:
+    src: "/tmp/k3s.{{ ansible_architecture }}"
+    dest: "/usr/local/bin/k3s"
+    mode: '741'
+    owner: root
+    group: root
+  register: k3s_binary_copy
+  when: >
+    node_k3s.current_hash != node_k3s.desired_hash
+
+
+- name: K3s Binary Upgrade
+  ansible.builtin.service:
+    name: |-
+      {%- if nfc_role_kubernetes_master | default(false) | bool -%}
+        k3s
+      {%- else -%}
+        k3s-agent
+      {%- endif %}
+    state: restarted
+  register: k3s_upgrade_service_restart
+  when: >
+    (
+      k3s_binary_copy.changed | default(false) | bool
+        and
+      node_k3s.installed | default(false) | bool
+    )
+      or
+    (
+      node_k3s.running_version != node_k3s.desired_version
+        and
+      node_k3s.installed | default(false) | bool
+    )
+
+
+- name: Create Fact - cluster_upgraded
+  ansible.builtin.set_fact:
+    nfc_role_kubernetes_cluster_upgraded: true
+    cacheable: true
+  when: >
+    k3s_upgrade_service_restart.changed | default(false) | bool
 
 
 - name: Download Install Scripts
@@ -173,6 +390,8 @@
     dest: "{{ item.dest }}"
     mode: "744"
   changed_when: false
+  delay: 10
+  retries: 3
   register: k3s_download_script
   delegate_to: localhost
   run_once: true
@@ -181,6 +400,8 @@
     ansible_os_family == 'Debian'
       and
     item.when | default(true) | bool
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
   loop: "{{ download_files }}"
   vars:
     ansible_connection: local
@@ -190,61 +411,6 @@
       - dest: /tmp/install_olm.sh
         url: https://raw.githubusercontent.com/operator-framework/operator-lifecycle-manager/v{{ kubernetes_version_olm }}/scripts/install.sh
         when: "{{ nfc_role_kubernetes_install_olm }}"
-
-
-- name: Download K3s Binary
-  ansible.builtin.uri:
-    url: |-
-      https://github.com/k3s-io/k3s/releases/download/v
-        {{- KubernetesVersion + KubernetesVersion_k3s_prefix | urlencode -}}
-      /k3s
-      {%- if cpu_arch.key == 'aarch64' -%}
-      -arm64
-      {%- endif %}
-    method: GET
-    return_content: false
-    status_code:
-      - 200
-      - 304
-    dest: "/tmp/k3s.{{ cpu_arch.key }}"
-    mode: "744"
-  changed_when: false
-  register: k3s_download_files
-  delegate_to: localhost
-  run_once: true
-  # no_log: true
-  when: ansible_os_family == 'Debian'
-  loop: "{{ nfc_kubernetes_install_architectures | dict2items }}"
-  loop_control:
-    loop_var: cpu_arch
-  vars:
-    ansible_connection: local
-
-
-- name: "[TRACE] Downloaded File SHA256"
-  ansible.builtin.set_fact:
-    hash_sha256_k3s_downloaded_binary: "{{ lookup('ansible.builtin.file', '/tmp/k3s.' + cpu_arch.key) | hash('sha256') | string }}"
-  delegate_to: localhost
-  loop: "{{ nfc_kubernetes_install_architectures | dict2items }}"
-  loop_control:
-    loop_var: cpu_arch
-
-
-- name: Existing k3s File hash
-  ansible.builtin.stat:
-    checksum_algorithm: sha256
-    name: /usr/local/bin/k3s
-  register: hash_sha256_k3s_existing_binary
-
-
-- name: Copy K3s binary to Host
-  ansible.builtin.copy:
-    src: "/tmp/k3s.{{ ansible_architecture }}"
-    dest: "/usr/local/bin/k3s"
-    mode: '741'
-    owner: root
-    group: root
-  when: hash_sha256_k3s_existing_binary.stat.checksum | default('0') != hash_sha256_k3s_downloaded_binary
 
 
 - name: Copy install scripts to Host
@@ -263,6 +429,8 @@
         when: "{{ nfc_role_kubernetes_install_olm }}"
   when: >
     item.when | default(true) | bool
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
 
 
 - name: Required Initial config files
@@ -276,7 +444,8 @@
   loop: "{{ k3s.files }}"
   when: >
     item.when | default(true) | bool
-  #   kubernetes_config.cluster.prime.name == inventory_hostname
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
 
 
 - name: Copy Intial required templates
@@ -291,6 +460,8 @@
   diff: true
   when: >
     item.when | default(true) | bool
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
   vars:
     templates_to_apply:
       - src: k3s-config.yaml.j2
@@ -308,7 +479,7 @@
                   and
                 file_calico_yaml_metadata.stat.exists
                   and
-                k3s_installed.rc == 0
+                not node_k3s.installed | bool
               )
                 or
               'calico_manifest' in ansible_run_tags
@@ -335,19 +506,23 @@
   ansible.builtin.command:
     cmd: update-alternatives --set iptables /usr/sbin/iptables-legacy
   changed_when: false
+  when: >
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
 
 
 - name: Install K3s (prime master)
   ansible.builtin.shell:
     cmd: |
       INSTALL_K3S_SKIP_DOWNLOAD=true \
-      INSTALL_K3S_VERSION="v{{ KubernetesVersion }}{{ KubernetesVersion_k3s_prefix }}" \
+      INSTALL_K3S_VERSION="{{ node_k3s.desired_version }}" \
       /tmp/install.sh {% if nfc_role_kubernetes_etcd_enabled %}--cluster-init{% endif %}
   changed_when: false
   when: >
     kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
       and
-    k3s_installed.rc == 1
+    not node_k3s.installed | bool
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
 
 
 - name: Install Calico Operator
@@ -370,6 +545,8 @@
     'calico_manifest' not in ansible_run_tags
       and
     kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
 
 
 - name: Install MetalLB Operator
@@ -389,6 +566,8 @@
     nfc_kubernetes_enable_metallb | default(false) | bool
       and
     kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
 
 
 - name: Wait for kubernetes prime to be ready
@@ -413,6 +592,20 @@
     kubernetes_ready_check.rc != 0
   changed_when: false
   failed_when: kubernetes_ready_check.rc != 0
+  when: >
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
+
+
+- name: Config Link
+  ansible.builtin.shell:
+    cmd: >
+      ln -s /etc/rancher/k3s/k3s.yaml ~/.kube/config
+    executable: bash
+    creates: ~/.kube/config
+  when: >
+    nfc_role_kubernetes_master | default(false) | bool
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
 
 
 - name: Install olm
@@ -429,6 +622,8 @@
     kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
       and
     nfc_role_kubernetes_install_olm | default(false) | bool
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
 
 
 - name: Uninstall OLM
@@ -457,6 +652,8 @@
     kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
       and
     'olm_uninstall' in ansible_run_tags
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
 
 
 - name: Enable Cluster Encryption
@@ -468,6 +665,8 @@
     kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
       and
     kubernetes_config.cluster.networking.encrypt | default(false) | bool
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
       and
     (
       'calico_manifest' in ansible_run_tags
@@ -487,6 +686,8 @@
   run_once: true
   register: k3s_join_token
   no_log: true # Value is sensitive
+  when: >
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
 
 
 - name: Create Token fact
@@ -495,6 +696,8 @@
   delegate_to: "{{ kubernetes_config.cluster.prime.name | default(inventory_hostname) }}"
   run_once: true
   no_log: true # Value is sensitive
+  when: >
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
 
 
 - name: Install K3s (master nodes)
@@ -502,7 +705,7 @@
     cmd: |
       INSTALL_K3S_EXEC="server" \
       INSTALL_K3S_SKIP_DOWNLOAD=true \
-      INSTALL_K3S_VERSION="v{{ KubernetesVersion }}{{ KubernetesVersion_k3s_prefix }}" \
+      INSTALL_K3S_VERSION="{{ node_k3s.desired_version }}" \
       K3S_TOKEN="{{ k3s_join_token }}" \
       /tmp/install.sh
     executable: /bin/bash
@@ -512,7 +715,9 @@
       and
     not kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
       and
-    k3s_installed.rc == 1
+    not node_k3s.installed | bool
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
 
 
 - name: Install K3s (worker nodes)
@@ -521,7 +726,7 @@
       set -o pipefail
       INSTALL_K3S_EXEC="agent" \
       INSTALL_K3S_SKIP_DOWNLOAD=true \
-      INSTALL_K3S_VERSION="v{{ KubernetesVersion }}{{ KubernetesVersion_k3s_prefix }}" \
+      INSTALL_K3S_VERSION="v{{ node_k3s.desired_version }}" \
       K3S_TOKEN="{{ k3s_join_token }}" \
       K3S_URL="https://{{ hostvars[kubernetes_config.cluster.prime.name | default(inventory_hostname)].ansible_host }}:6443" \
       /tmp/install.sh -
@@ -532,7 +737,9 @@
       and
     not kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
       and
-    k3s_installed.rc == 1
+    not node_k3s.installed | bool
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
 
 
 - name: Set Kubernetes Final Install Fact
