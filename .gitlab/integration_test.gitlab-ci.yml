@@ -45,6 +45,10 @@
 
         docker exec -i test_image_${CI_JOB_ID} pip install ansible-core --break-system-packages;
 
+        docker exec -i test_image_${CI_JOB_ID} mkdir -p /etc/iptables;
+
+        docker exec -i test_image_${CI_JOB_ID} touch /etc/iptables/rules.v6;
+
         docker exec -i test_image_${CI_JOB_ID} update-alternatives --set iptables /usr/sbin/iptables-legacy;
 
       else
