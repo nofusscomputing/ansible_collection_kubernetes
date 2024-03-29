@@ -1,0 +1,19 @@
+---
+
+- name: Create Test Results File
+  hosts: localhost
+  gather_facts: false
+
+
+  tasks:
+    
+
+    - name: Load Test Results
+      ansible.builtin.include_vars:
+        dir: ../test_results
+        name: test_results
+
+    - name: Create Results file
+      ansible.builtin.copy:
+        content: "{{ (test_results) | to_nice_json }}"
+        dest: ../test_results.json

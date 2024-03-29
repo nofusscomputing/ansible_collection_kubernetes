@@ -18,6 +18,15 @@
     not ansible_check_mode
 
 
+- name: Testing Env Variables
+  ansible.builtin.set_fact:
+    ansible_default_ipv4: {
+      "address": "127.0.0.1"
+    }
+  when: >
+    lookup('ansible.builtin.env', 'CI_COMMIT_SHA') | default('') != ''
+
+
 - name: Check Machine Architecture
   ansible.builtin.set_fact:
     nfc_kubernetes_install_architectures: "{{ nfc_kubernetes_install_architectures | default({}) | combine({ansible_architecture: ''}) }}"

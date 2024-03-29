@@ -32,6 +32,7 @@
     loop_var: package
   vars:
     packages:
+      - wget
       - curl
       - iptables
       - jq
@@ -52,14 +53,29 @@
     - install
 
 
-- name: Disable swap
-  ansible.builtin.command:
-    cmd: swapoff -a
-  changed_when: false
-  when:
-    - ansible_os_family == 'Debian'
-  tags:
-    - install
+- name: Testing Environment try/catch
+  block:
+
+
+    - name: Disable swap
+      ansible.builtin.command:
+        cmd: swapoff -a
+      changed_when: false
+      when:
+        - ansible_os_family == 'Debian'
+      tags:
+        - install
+
+
+  rescue:
+
+    - name: Check if inside Gitlab CI
+      ansible.builtin.assert:
+        that:
+          - lookup('ansible.builtin.env', 'CI_COMMIT_SHA') | default('') != ''
+        success_msg: "Inside testing enviroment, 'Disable swap' error OK"
+        fail_msg: "You should figure out what went wrong"
+
 
 - name: Check an armbian os system
   ansible.builtin.stat:
@@ -226,6 +242,7 @@
       {%- else -%}
         false
       {%- endif -%}";
+
       export running_version="{{ kubernetes_node.resources[0].status.nodeInfo.kubeletVersion | default('0') }}";
 
       export correct_hash=$(wget -q https://github.com/k3s-io/k3s/releases/download/v
