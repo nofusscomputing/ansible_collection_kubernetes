@@ -22,6 +22,40 @@ include:
       - automation/.gitlab-ci-ansible.yaml
 
 
+Build Collection:
+  extends: .ansible_collection_build
+  needs:
+    - job: Ansible Lint
+      optional: true
+    - job: Ansible Lint (galaxy.yml)
+      optional: true
+
+  rules:
+
+    - if: $CI_COMMIT_TAG
+      when: always
+
+    # Needs to run, even by bot as the test results need to be available
+    # - if: "$CI_COMMIT_AUTHOR =='nfc_bot <helpdesk@nofusscomputing.com>'"
+    #   when: never
+
+    - if: # Occur on merge
+        $CI_COMMIT_BRANCH
+          &&
+        $CI_PIPELINE_SOURCE == "push"
+      when: always
+
+    # - if:
+    #     $CI_COMMIT_BRANCH != "development"
+    #       &&
+    #     $CI_COMMIT_BRANCH != "master"
+    #       &&
+    #     $CI_PIPELINE_SOURCE == "push"
+    #   when: always
+
+    - when: never
+
+
 Update Git Submodules:
   extends: .ansible_playbook_git_submodule
 
