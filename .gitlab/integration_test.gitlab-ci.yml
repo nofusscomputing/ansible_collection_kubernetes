@@ -1,0 +1,43 @@
+
+.integration_test:
+  stage: test
+  needs:
+    - "Build Collection"
+  # image: nofusscomputing/ansible-docker-os:$test_image
+  image: debian:stable
+  services:
+    - name: docker:23-dind
+      entrypoint: ["env", "-u", "DOCKER_HOST"]
+      command: ["dockerd-entrypoint.sh"]
+  before_script:
+    - | # start test container
+      docker run -d \
+        --privileged \
+        -v ${PWD}:/workdir \
+        --workdir /workdir \
+        --rm \
+        --name test_image_${CI_JOB_ID} \
+        nofusscomputing/ansible-docker-os:${st_image}
+
+    - | # enter test container
+      docker exec -ti test_image_${CI_JOB_ID} bash
+    - ps aux
+    - apt update
+    - apt install -y --no-install-recommends python3-pip
+    - pip install ansible-core
+  script:
+    - | # Install the collection
+      ansible-galaxy collection install /$(ls artifacts/galaxy/${ANSIBLE_GALAXY_NAMESPACE}-${ANSIBLE_GALAXY_PACKAGE_NAME}*.tar.gz)
+
+    - | # run the collection
+      ansible-playbook nofusscomputing.kubernetes.install;
+  artifacts:
+    untracked: true
+
+
+Integration Test:
+  extends: .integration_test
+  parallel:
+    matrix:
+      - test_image: dev-debian-11
+      - test_image: dev-ubuntu-22.04
