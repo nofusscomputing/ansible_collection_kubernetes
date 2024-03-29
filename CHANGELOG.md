@@ -1,3 +1,20 @@
+## 1.6.0 (2024-03-29)
+
+### Feat
+
+- **test**: add integration test. playbook install
+- add retry=3 delay=10 secs to all ansible url modules
+- **upgrade**: If upgrade occurs, dont run remaining tasks
+- support upgrading cluster
+
+### Fix
+
+- **docs**: use correct badge query url
+
+### Refactor
+
+- **galaxy**: for dependent collections prefix with `>=` so as to not cause version lock
+
 ## 1.5.0 (2024-03-21)
 
 ### Feat
@@ -43,7 +60,6 @@
 - **config**: if hostname=localhost use hostname command to fetch hostname
 - limit the use of master group
 - add missing dependency ansible.posix
-- **install**: use correct var type for packages
 
 ## 1.1.1 (2024-03-13)
 
@@ -64,10 +80,3 @@
 - **ci**: ensure correct package name is used
 
 ## 1.0.0 (2024-03-13)
-
-### Refactor
-
-- **nfc_kubernetes**: update meta file
-- remove dependency on role nfc_common
-
-## 0.3.0 (2024-03-13)
