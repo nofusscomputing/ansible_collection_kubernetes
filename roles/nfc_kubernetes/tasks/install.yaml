@@ -72,6 +72,8 @@
     install_kubernetes | default(true) | bool
       and
     kubernetes_installed | default(false) | bool
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
   tags:
     - always
 
@@ -88,6 +90,8 @@
     kubernetes_config.kube_virt.enabled | default(nfc_role_kubernetes_install_kubevirt)
       and
     inventory_hostname in kubernetes_config.kube_virt.nodes | default([ inventory_hostname ]) | list
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
   tags:
     - always
 
@@ -104,5 +108,7 @@
     kubernetes_config.helm.enabled | default(nfc_role_kubernetes_install_helm)
       and
     nfc_role_kubernetes_master
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
   tags:
     - always

@@ -379,6 +379,8 @@
     ansible_os_family == 'Debian'
       and
     item.when | default(true) | bool
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
   loop: "{{ download_files }}"
   vars:
     ansible_connection: local
@@ -406,6 +408,8 @@
         when: "{{ nfc_role_kubernetes_install_olm }}"
   when: >
     item.when | default(true) | bool
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
 
 
 - name: Required Initial config files
@@ -419,7 +423,8 @@
   loop: "{{ k3s.files }}"
   when: >
     item.when | default(true) | bool
-  #   kubernetes_config.cluster.prime.name == inventory_hostname
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
 
 
 - name: Copy Intial required templates
@@ -434,6 +439,8 @@
   diff: true
   when: >
     item.when | default(true) | bool
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
   vars:
     templates_to_apply:
       - src: k3s-config.yaml.j2
@@ -478,6 +485,8 @@
   ansible.builtin.command:
     cmd: update-alternatives --set iptables /usr/sbin/iptables-legacy
   changed_when: false
+  when: >
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
 
 
 - name: Install K3s (prime master)
@@ -491,16 +500,8 @@
     kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
       and
     not node_k3s.installed | bool
-
-
-- name: Config Link
-  ansible.builtin.shell:
-    cmd: >
-      ln -s /etc/rancher/k3s/k3s.yaml ~/.kube/config
-    executable: bash
-    creates: ~/.kube/config
-  when: >
-    nfc_role_kubernetes_master | default(false) | bool
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
 
 
 - name: Install Calico Operator
@@ -523,6 +524,8 @@
     'calico_manifest' not in ansible_run_tags
       and
     kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
 
 
 - name: Install MetalLB Operator
@@ -542,6 +545,8 @@
     nfc_kubernetes_enable_metallb | default(false) | bool
       and
     kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
 
 
 - name: Wait for kubernetes prime to be ready
@@ -566,6 +571,20 @@
     kubernetes_ready_check.rc != 0
   changed_when: false
   failed_when: kubernetes_ready_check.rc != 0
+  when: >
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
+
+
+- name: Config Link
+  ansible.builtin.shell:
+    cmd: >
+      ln -s /etc/rancher/k3s/k3s.yaml ~/.kube/config
+    executable: bash
+    creates: ~/.kube/config
+  when: >
+    nfc_role_kubernetes_master | default(false) | bool
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
 
 
 - name: Install olm
@@ -582,6 +601,8 @@
     kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
       and
     nfc_role_kubernetes_install_olm | default(false) | bool
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
 
 
 - name: Uninstall OLM
@@ -610,6 +631,8 @@
     kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
       and
     'olm_uninstall' in ansible_run_tags
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
 
 
 - name: Enable Cluster Encryption
@@ -621,6 +644,8 @@
     kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
       and
     kubernetes_config.cluster.networking.encrypt | default(false) | bool
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
       and
     (
       'calico_manifest' in ansible_run_tags
@@ -640,6 +665,8 @@
   run_once: true
   register: k3s_join_token
   no_log: true # Value is sensitive
+  when: >
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
 
 
 - name: Create Token fact
@@ -648,6 +675,8 @@
   delegate_to: "{{ kubernetes_config.cluster.prime.name | default(inventory_hostname) }}"
   run_once: true
   no_log: true # Value is sensitive
+  when: >
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
 
 
 - name: Install K3s (master nodes)
@@ -666,6 +695,8 @@
     not kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
       and
     not node_k3s.installed | bool
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
 
 
 - name: Install K3s (worker nodes)
@@ -686,6 +717,8 @@
     not kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
       and
     not node_k3s.installed | bool
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
 
 
 - name: Set Kubernetes Final Install Fact

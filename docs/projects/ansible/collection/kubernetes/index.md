@@ -74,5 +74,8 @@ For the available variables please view the [nfc_kubernetes role docs](roles/nfc
 
 [In place cluster upgrades](https://docs.k3s.io/upgrades/manual#upgrade-k3s-using-the-binary) is the method used to conduct the cluster upgrades. The logic for the upgrades first confirms that K3s is installed and that the local binary and running k3s version are the desired versions. If they are not, they will be updated to the desired version. On completion of this the node has its `k3s` service restarted which completes the upgrade process.
 
+!!! info
+    If an upgrade occurs, no other task within the play will run. This is by design. if you have further tasks to be run in addition to the upgrade, run the play again.
+
 !!! danger
     not following the [Kubernetes version skew policy](https://kubernetes.io/releases/version-skew-policy/) when upgrading your cluster may break your cluster.
