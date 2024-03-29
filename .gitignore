@@ -1,3 +1,5 @@
 artifacts/
 build/
+test_results/
+test_results.json
 *.tar.gz

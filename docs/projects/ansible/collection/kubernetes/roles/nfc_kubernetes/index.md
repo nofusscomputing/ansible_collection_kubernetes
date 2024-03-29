@@ -70,6 +70,8 @@ This Ansible role is designed to deploy a K3s Kubernetes cluster. Without adding
 
 - Install the Helm Binary
 
+- Upgrade cluster
+
 
 ## Role Workflow
 
