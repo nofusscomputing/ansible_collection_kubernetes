@@ -30,6 +30,7 @@
         --env "ANSIBLE_FORCE_COLOR=true" \
         --env "CI_COMMIT_SHA=${CI_COMMIT_SHA}" \
         --env "ANSIBLE_LOG_PATH=/workdir/ansible.log" \
+        --env "PIP_BREAK_SYSTEM_PACKAGES=1" \
         --name test_image_${CI_JOB_ID} \
         nofusscomputing/ansible-docker-os:dev-${test_image}
 
