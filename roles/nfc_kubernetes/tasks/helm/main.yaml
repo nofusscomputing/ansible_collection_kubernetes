@@ -5,6 +5,8 @@
     url: https://baltocdn.com/helm/signing.asc
     dest: /usr/share/keyrings/helm.asc
     mode: 740
+  delay: 10
+  retries: 3
 
 
 - name: Add Helm Repository

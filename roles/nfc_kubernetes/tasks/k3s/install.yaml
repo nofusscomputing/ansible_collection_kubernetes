@@ -297,6 +297,8 @@
       - 304
     dest: "/tmp/k3s.{{ cpu_arch.key }}"
     mode: "744"
+  delay: 10
+  retries: 3
   register: k3s_download_files
   delegate_to: localhost
   failed_when: >
@@ -371,6 +373,8 @@
     dest: "{{ item.dest }}"
     mode: "744"
   changed_when: false
+  delay: 10
+  retries: 3
   register: k3s_download_script
   delegate_to: localhost
   run_once: true
