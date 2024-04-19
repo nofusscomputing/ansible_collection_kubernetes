@@ -1,0 +1,30 @@
+galaxy_info:
+
+  role_name: kubernetes_netbox
+
+  author: No Fuss Computing
+
+  description: Configure the required items within Netbox to support deploying kubernetes from Netbox configuration.
+
+  issue_tracker_url: https://gitlab.com/nofusscomputing/projects/ansible/collections/kubernetes
+
+  license: MIT
+
+  min_ansible_version: '2.15'
+
+  platforms:
+
+    - name: Debian
+      versions:
+        - bullseye
+        - bookworm
+
+    - name: Ubuntu
+      versions:
+        - 21
+
+  galaxy_tags:
+    - cluster
+    - k3s
+    - kubernetes
+    - netbox

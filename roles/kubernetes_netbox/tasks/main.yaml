@@ -1,0 +1,7 @@
+---
+
+- name: Setup NetBox for Kubernetes Cluster Deployments
+  ansible.builtin.include_tasks:
+    file: cluster.yaml
+  tags:
+    - always
