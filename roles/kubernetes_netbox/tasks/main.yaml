@@ -3,5 +3,19 @@
 - name: Setup NetBox for Kubernetes Cluster Deployments
   ansible.builtin.include_tasks:
     file: cluster.yaml
+    apply:
+      tags:
+        - always
   tags:
     - always
+
+
+- name: Setup NetBox for Kubernetes Service Deployments
+  ansible.builtin.include_tasks:
+    file: services.yaml
+    apply:
+      tags:
+        - always
+  tags:
+    - never
+    - services
