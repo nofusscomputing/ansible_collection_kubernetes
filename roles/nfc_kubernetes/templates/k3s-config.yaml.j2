@@ -153,7 +153,7 @@
 
 {%- if groups[kubernetes_config.cluster.group_name | default('make_me_optional')] | default([]) | list | length > 0 -%}
   
-  {%- if k3s_installed.rc == 0 -%}
+  {%- if node_k3s.installed -%}
 
     {%- set ns = namespace(server=[]) -%}
 
@@ -198,7 +198,7 @@
   {%- elif 
     kubernetes_config.cluster.prime.name != inventory_hostname
       and
-    k3s_installed.rc == 1
+    not node_k3s.installed
   -%}
 
     {%- set server = (server | default([])) + [
