@@ -27,6 +27,20 @@
     lookup('ansible.builtin.env', 'CI_COMMIT_SHA') | default('') != ''
 
 
+- name: Gather Facts required by role
+  ansible.builtin.setup:
+    gather_subset:
+      - all_ipv4_addresses
+      - os_family
+      - processor
+  when: >
+    ansible_architecture is not defined
+      or
+    ansible_default_ipv4 is not defined
+      or
+    ansible_os_family is not defined
+
+
 - name: Check Machine Architecture
   ansible.builtin.set_fact:
     nfc_kubernetes_install_architectures: "{{ nfc_kubernetes_install_architectures | default({}) | combine({ansible_architecture: ''}) }}"
