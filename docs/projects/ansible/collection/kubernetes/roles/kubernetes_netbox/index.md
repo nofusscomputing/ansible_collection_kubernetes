@@ -25,6 +25,11 @@ This Ansible role as part of our collection `nofusscomputing.kubernetes` is inte
 
 - Adds custom fields to `cluster` object within NetBox that this collection can use to deploy a kubernetes cluster.
 
+!!! info
+    Due to a bug in ansible module `netbox.netbox.netbox_custom_field` The fields are not created as they should be. For example, the fields are supposed to be set to only display when not empty. for more information see [Github #1210](https://github.com/netbox-community/ansible_modules/issues/1210). We have [added a workaround](https://gitlab.com/nofusscomputing/projects/ansible/collections/kubernetes/-/merge_requests/56#note_1876912267) so the fields are created.
+    
+    Other than that, the fields are created as they should.
+
 
 ## Usage
 
