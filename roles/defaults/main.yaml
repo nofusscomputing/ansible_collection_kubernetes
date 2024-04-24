@@ -1,0 +1,9 @@
+---
+
+#
+# NetBox Access Variables. Required
+#
+
+# nfc_pb_api_netbox_url:                   # ENV [NETBOX_API]
+# nfc_pb_api_netbox_token:                 # ENV [NETBOX_TOKEN]
+# nfc_pb_api_netbox_validate_cert: true    # ENV [NETBOX_VALIDATE_CERT]

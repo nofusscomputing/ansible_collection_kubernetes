@@ -48,6 +48,8 @@ nfc_role_kubernetes_kubevirt_operator_replicas: 1
 
 nfc_role_kubernetes_oidc_enabled: false
 
+nfc_role_kubernetes_resolv_conf_file: /etc/resolv.conf
+
 nfc_role_kubernetes_pod_subnet: 172.16.248.0/21
 nfc_role_kubernetes_service_subnet: 172.16.244.0/22
 

@@ -1,0 +1,50 @@
+---
+
+- name: Create Custom Field - Instance
+  netbox.netbox.netbox_custom_field:
+    netbox_url: "{{ lookup('env', 'NETBOX_API') | default(nfc_pb_api_netbox_url) }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_TOKEN') | default(nfc_pb_api_netbox_token) }}"
+    data:
+      content_types:
+        - ipam.service
+      group_name: Kubernetes
+      label: Instance Name
+      description: "Name of the Instance to be deployed"
+      name: service_kubernetes_instance
+      type: text
+      ui_visibility: hidden-ifunset
+      # is_cloneable: true
+      weight: 100
+    state: present
+    validate_certs: "{{ lookup('env', 'NETBOX_VALIDATE_CERT') | default(nfc_pb_api_netbox_validate_cert) | default(true) | bool }}"
+  delegate_to: localhost
+  failed_when: >
+    custom_field_tmp.msg != 'ui_visibility does not exist on existing object. Check to make sure valid field.'
+      and
+    custom_field_tmp.diff is not defined
+  register: custom_field_tmp
+
+
+- name: Create Custom Field - Namespace
+  netbox.netbox.netbox_custom_field:
+    netbox_url: "{{ lookup('env', 'NETBOX_API') | default(nfc_pb_api_netbox_url) }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_TOKEN') | default(nfc_pb_api_netbox_token) }}"
+    data:
+      content_types:
+        - ipam.service
+      group_name: Kubernetes
+      label: Service Namespace
+      description: "Deployment Namespace"
+      name: service_kubernetes_namespace
+      type: text
+      ui_visibility: hidden-ifunset
+      # is_cloneable: true
+      weight: 100
+    state: present
+    validate_certs: "{{ lookup('env', 'NETBOX_VALIDATE_CERT') | default(nfc_pb_api_netbox_validate_cert) | default(true) | bool }}"
+  delegate_to: localhost
+  failed_when: >
+    custom_field_tmp.msg != 'ui_visibility does not exist on existing object. Check to make sure valid field.'
+      and
+    custom_field_tmp.diff is not defined
+  register: custom_field_tmp

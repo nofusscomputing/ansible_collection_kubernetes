@@ -5,6 +5,8 @@
     cmd: hostname
   changed_when: false
   register: hostname_to_check
+  tags:
+    - always
 
 
 - name: Hostname Check
@@ -12,6 +14,8 @@
     that:
       - hostname_to_check.stdout == inventory_hostname
     msg: The hostname must match the inventory_hostname
+  tags:
+    - always
   when: >
     inventory_hostname != 'localhost'
       and
@@ -23,13 +27,33 @@
     ansible_default_ipv4: {
       "address": "127.0.0.1"
     }
+  tags:
+    - always
   when: >
     lookup('ansible.builtin.env', 'CI_COMMIT_SHA') | default('') != ''
+
+
+- name: Gather Facts required by role
+  ansible.builtin.setup:
+    gather_subset:
+      - all_ipv4_addresses
+      - os_family
+      - processor
+  tags:
+    - always
+  when: >
+    ansible_architecture is not defined
+      or
+    ansible_default_ipv4 is not defined
+      or
+    ansible_os_family is not defined
 
 
 - name: Check Machine Architecture
   ansible.builtin.set_fact:
     nfc_kubernetes_install_architectures: "{{ nfc_kubernetes_install_architectures | default({}) | combine({ansible_architecture: ''}) }}"
+  tags:
+    - always
 
 
 - name: Configure Kubernetes Firewall Rules
