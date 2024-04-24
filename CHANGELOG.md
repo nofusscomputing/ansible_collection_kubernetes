@@ -1,3 +1,9 @@
+## 1.7.1 (2024-04-24)
+
+### Fix
+
+- add role readme
+
 ## 1.7.0 (2024-04-24)
 
 ### Feat
@@ -71,8 +77,6 @@
 - **readme**: update gitlab links to new loc
 - **configure**: dont attempt to configure firewall if install=false
 - **handler**: remove old k8s code causing handler to fail
-- **handler**: kubernetes restart handler now using updated node type vars
-- **config**: if hostname=localhost use hostname command to fetch hostname
 
 ## 1.1.1 (2024-03-13)
 
@@ -85,9 +89,3 @@
 ### Feat
 
 - add role readme and fix gitlab release job
-
-## 1.0.1 (2024-03-13)
-
-### Fix
-
-- **ci**: ensure correct package name is used
