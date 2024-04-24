@@ -30,6 +30,7 @@
         --env "ANSIBLE_FORCE_COLOR=true" \
         --env "CI_COMMIT_SHA=${CI_COMMIT_SHA}" \
         --env "ANSIBLE_LOG_PATH=/workdir/ansible.log" \
+        --env "PIP_BREAK_SYSTEM_PACKAGES=1" \
         --name test_image_${CI_JOB_ID} \
         nofusscomputing/ansible-docker-os:dev-${test_image}
 
@@ -44,6 +45,10 @@
         echo "Debian 12":
 
         docker exec -i test_image_${CI_JOB_ID} pip install ansible-core --break-system-packages;
+
+        docker exec -i test_image_${CI_JOB_ID} mkdir -p /etc/iptables;
+
+        docker exec -i test_image_${CI_JOB_ID} touch /etc/iptables/rules.v6;
 
         docker exec -i test_image_${CI_JOB_ID} update-alternatives --set iptables /usr/sbin/iptables-legacy;
 
@@ -124,24 +129,25 @@
       allow_failure: true
       when: on_success
 
-    - if: "$CI_COMMIT_AUTHOR =='nfc_bot <helpdesk@nofusscomputing.com>'"
-      when: never
+    # Needs to run, even by bot as the test results need to be available
+    # - if: "$CI_COMMIT_AUTHOR =='nfc_bot <helpdesk@nofusscomputing.com>'"
+    #   when: never
 
     - if: # Occur on merge
-        $CI_COMMIT_BRANCH == "development"
+        $CI_COMMIT_BRANCH
           &&
         $CI_PIPELINE_SOURCE == "push"
       allow_failure: true
-      when: always
+      when: on_success
 
-    - if:
-        $CI_COMMIT_BRANCH != "development"
-          &&
-        $CI_COMMIT_BRANCH != "master"
-          &&
-        $CI_PIPELINE_SOURCE == "push"
-      allow_failure: true
-      when: always
+    # - if:
+    #     $CI_COMMIT_BRANCH != "development"
+    #       &&
+    #     $CI_COMMIT_BRANCH != "master"
+    #       &&
+    #     $CI_PIPELINE_SOURCE == "push"
+    #   allow_failure: true
+    #   when: always
 
     - when: never
 

@@ -243,6 +243,12 @@
         false
       {%- endif -%}";
 
+      if ! service k3s status > /dev/null; then
+
+        export installed='false';
+
+      fi
+
       export running_version="{{ kubernetes_node.resources[0].status.nodeInfo.kubeletVersion | default('0') }}";
 
       export correct_hash=$(wget -q https://github.com/k3s-io/k3s/releases/download/v

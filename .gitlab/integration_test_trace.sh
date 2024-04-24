@@ -31,7 +31,7 @@ cmd "journalctl -xeu k3s.service"
 
 cmd "systemctl status netfilter-persistent.service"
 
-cmd "systemctl status iptables.servic"
+cmd "systemctl status iptables.service"
 
 cmd "systemctl status k3s.service"
 

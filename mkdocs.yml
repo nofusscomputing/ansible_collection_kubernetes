@@ -49,6 +49,9 @@ nav:
 
           - projects/ansible/collection/kubernetes/roles/nfc_kubernetes/release_notes.md
 
+        - Role kubernetes_netbox:
+
+          - projects/ansible/collection/kubernetes/roles/kubernetes_netbox/index.md
 
 - Operations: 
 

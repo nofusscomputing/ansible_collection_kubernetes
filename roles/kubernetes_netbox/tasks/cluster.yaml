@@ -1,0 +1,255 @@
+---
+
+# add cluster type kubernetes
+
+- name: Create Custom Field - Configure Firewall
+  netbox.netbox.netbox_custom_field:
+    netbox_url: "{{ lookup('env', 'NETBOX_API') | default(nfc_pb_api_netbox_url) }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_TOKEN') | default(nfc_pb_api_netbox_token) }}"
+    data:
+      content_types:
+        - virtualization.cluster
+      default: null
+      group_name: Kubernetes
+      label: Configure Firewall
+      name: nfc_role_kubernetes_configure_firewall
+      type: boolean
+      ui_visibility: 'hidden-ifunset'
+      # is_cloneable: false
+      weight: 100
+    state: present
+    validate_certs: "{{ lookup('env', 'NETBOX_VALIDATE_CERT') | default(nfc_pb_api_netbox_validate_cert) | default(true) | bool }}"
+  delegate_to: localhost
+  failed_when: >
+    custom_field_tmp.msg != 'ui_visibility does not exist on existing object. Check to make sure valid field.'
+      and
+    custom_field_tmp.diff is not defined
+  register: custom_field_tmp
+
+
+- name: Create Custom Field - ETCD Enabled
+  netbox.netbox.netbox_custom_field:
+    netbox_url: "{{ lookup('env', 'NETBOX_API') | default(nfc_pb_api_netbox_url) }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_TOKEN') | default(nfc_pb_api_netbox_token) }}"
+    data:
+      content_types:
+        - virtualization.cluster
+      default: null
+      group_name: Kubernetes
+      label: ETCD Enabled
+      name: nfc_role_kubernetes_etcd_enabled
+      type: boolean
+      ui_visibility: hidden-ifunset
+      # is_cloneable: false
+      weight: 100
+    state: present
+    validate_certs: "{{ lookup('env', 'NETBOX_VALIDATE_CERT') | default(nfc_pb_api_netbox_validate_cert) | default(true) | bool }}"
+  delegate_to: localhost
+  failed_when: >
+    custom_field_tmp.msg != 'ui_visibility does not exist on existing object. Check to make sure valid field.'
+      and
+    custom_field_tmp.diff is not defined
+  register: custom_field_tmp
+
+
+- name: Create Custom Field - Install OLM
+  netbox.netbox.netbox_custom_field:
+    netbox_url: "{{ lookup('env', 'NETBOX_API') | default(nfc_pb_api_netbox_url) }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_TOKEN') | default(nfc_pb_api_netbox_token) }}"
+    data:
+      content_types:
+        - virtualization.cluster
+      default: null
+      group_name: Kubernetes
+      label: Install OLM
+      name: nfc_role_kubernetes_install_olm
+      type: boolean
+      ui_visibility: hidden-ifunset
+      # is_cloneable: false
+      weight: 100
+    state: present
+    validate_certs: "{{ lookup('env', 'NETBOX_VALIDATE_CERT') | default(nfc_pb_api_netbox_validate_cert) | default(true) | bool }}"
+  delegate_to: localhost
+  failed_when: >
+    custom_field_tmp.msg != 'ui_visibility does not exist on existing object. Check to make sure valid field.'
+      and
+    custom_field_tmp.diff is not defined
+  register: custom_field_tmp
+
+
+- name: Create Custom Field - Install Helm
+  netbox.netbox.netbox_custom_field:
+    netbox_url: "{{ lookup('env', 'NETBOX_API') | default(nfc_pb_api_netbox_url) }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_TOKEN') | default(nfc_pb_api_netbox_token) }}"
+    data:
+      content_types:
+        - virtualization.cluster
+      default: null
+      group_name: Kubernetes
+      label: Install Helm
+      name: nfc_role_kubernetes_install_helm
+      type: boolean
+      ui_visibility: hidden-ifunset
+      # is_cloneable: false
+      weight: 100
+    state: present
+    validate_certs: "{{ lookup('env', 'NETBOX_VALIDATE_CERT') | default(nfc_pb_api_netbox_validate_cert) | default(true) | bool }}"
+  delegate_to: localhost
+  failed_when: >
+    custom_field_tmp.msg != 'ui_visibility does not exist on existing object. Check to make sure valid field.'
+      and
+    custom_field_tmp.diff is not defined
+  register: custom_field_tmp
+
+
+- name: Create Custom Field - Install KubeVirt
+  netbox.netbox.netbox_custom_field:
+    netbox_url: "{{ lookup('env', 'NETBOX_API') | default(nfc_pb_api_netbox_url) }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_TOKEN') | default(nfc_pb_api_netbox_token) }}"
+    data:
+      content_types:
+        - virtualization.cluster
+      default: null
+      group_name: Kubernetes
+      label: Install KubeVirt
+      name: nfc_role_kubernetes_install_kubevirt
+      type: boolean
+      ui_visibility: hidden-ifunset
+      # is_cloneable: false
+      weight: 100
+    state: present
+    validate_certs: "{{ lookup('env', 'NETBOX_VALIDATE_CERT') | default(nfc_pb_api_netbox_validate_cert) | default(true) | bool }}"
+  delegate_to: localhost
+  failed_when: >
+    custom_field_tmp.msg != 'ui_visibility does not exist on existing object. Check to make sure valid field.'
+      and
+    custom_field_tmp.diff is not defined
+  register: custom_field_tmp
+
+
+- name: Create Custom Field - KubeVirt Operator Replicas
+  netbox.netbox.netbox_custom_field:
+    netbox_url: "{{ lookup('env', 'NETBOX_API') | default(nfc_pb_api_netbox_url) }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_TOKEN') | default(nfc_pb_api_netbox_token) }}"
+    data:
+      content_types:
+        - virtualization.cluster
+      default: null
+      group_name: Kubernetes
+      label: KubeVirt Operator Replicas
+      name: nfc_role_kubernetes_kubevirt_operator_replicas
+      type: integer
+      ui_visibility: hidden-ifunset
+      # is_cloneable: false
+      validation_minimum: 1
+      weight: 100
+    state: present
+    validate_certs: "{{ lookup('env', 'NETBOX_VALIDATE_CERT') | default(nfc_pb_api_netbox_validate_cert) | default(true) | bool }}"
+  delegate_to: localhost
+  failed_when: >
+    custom_field_tmp.msg != 'ui_visibility does not exist on existing object. Check to make sure valid field.'
+      and
+    custom_field_tmp.diff is not defined
+  register: custom_field_tmp
+
+
+- name: Create Custom Field - Enable MetalLB
+  netbox.netbox.netbox_custom_field:
+    netbox_url: "{{ lookup('env', 'NETBOX_API') | default(nfc_pb_api_netbox_url) }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_TOKEN') | default(nfc_pb_api_netbox_token) }}"
+    data:
+      content_types:
+        - virtualization.cluster
+      default: null
+      group_name: Kubernetes
+      label: Enable MetalLB
+      name: nfc_kubernetes_enable_metallb
+      type: boolean
+      ui_visibility: hidden-ifunset
+      # is_cloneable: false
+      weight: 100
+    state: present
+    validate_certs: "{{ lookup('env', 'NETBOX_VALIDATE_CERT') | default(nfc_pb_api_netbox_validate_cert) | default(true) | bool }}"
+  delegate_to: localhost
+  failed_when: >
+    custom_field_tmp.msg != 'ui_visibility does not exist on existing object. Check to make sure valid field.'
+      and
+    custom_field_tmp.diff is not defined
+  register: custom_field_tmp
+
+
+- name: Create Custom Field - Enable ServiceLB (klipper)
+  netbox.netbox.netbox_custom_field:
+    netbox_url: "{{ lookup('env', 'NETBOX_API') | default(nfc_pb_api_netbox_url) }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_TOKEN') | default(nfc_pb_api_netbox_token) }}"
+    data:
+      content_types:
+        - virtualization.cluster
+      default: null
+      group_name: Kubernetes
+      label: Enable ServiceLB (klipper)
+      name: nfc_kubernetes_enable_servicelb
+      type: boolean
+      ui_visibility: hidden-ifunset
+      # is_cloneable: false
+      weight: 100
+    state: present
+    validate_certs: "{{ lookup('env', 'NETBOX_VALIDATE_CERT') | default(nfc_pb_api_netbox_validate_cert) | default(true) | bool }}"
+  delegate_to: localhost
+  failed_when: >
+    custom_field_tmp.msg != 'ui_visibility does not exist on existing object. Check to make sure valid field.'
+      and
+    custom_field_tmp.diff is not defined
+  register: custom_field_tmp
+
+
+- name: Create Custom Field - Pod Subnet
+  netbox.netbox.netbox_custom_field:
+    netbox_url: "{{ lookup('env', 'NETBOX_API') | default(nfc_pb_api_netbox_url) }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_TOKEN') | default(nfc_pb_api_netbox_token) }}"
+    data:
+      content_types:
+        - virtualization.cluster
+      default: null
+      group_name: Kubernetes
+      label: Pod Subnet
+      name: nfc_role_kubernetes_pod_subnet
+      object_type: ipam.prefix
+      type: object
+      ui_visibility: hidden-ifunset
+      # is_cloneable: false
+      weight: 100
+    state: present
+    validate_certs: "{{ lookup('env', 'NETBOX_VALIDATE_CERT') | default(nfc_pb_api_netbox_validate_cert) | default(true) | bool }}"
+  delegate_to: localhost
+  failed_when: >
+    custom_field_tmp.msg != 'ui_visibility does not exist on existing object. Check to make sure valid field.'
+      and
+    custom_field_tmp.diff is not defined
+  register: custom_field_tmp
+
+
+- name: Create Custom Field - Service Subnet
+  netbox.netbox.netbox_custom_field:
+    netbox_url: "{{ lookup('env', 'NETBOX_API') | default(nfc_pb_api_netbox_url) }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_TOKEN') | default(nfc_pb_api_netbox_token) }}"
+    data:
+      content_types:
+        - virtualization.cluster
+      default: null
+      group_name: Kubernetes
+      label: Service Subnet
+      name: nfc_role_kubernetes_service_subnet
+      object_type: ipam.prefix
+      type: object
+      ui_visibility: hidden-ifunset
+      # is_cloneable: false
+      weight: 100
+    state: present
+    validate_certs: "{{ lookup('env', 'NETBOX_VALIDATE_CERT') | default(nfc_pb_api_netbox_validate_cert) | default(true) | bool }}"
+  delegate_to: localhost
+  failed_when: >
+    custom_field_tmp.msg != 'ui_visibility does not exist on existing object. Check to make sure valid field.'
+      and
+    custom_field_tmp.diff is not defined
+  register: custom_field_tmp
