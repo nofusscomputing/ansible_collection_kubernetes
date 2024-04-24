@@ -1,6 +1,6 @@
 ---
 
-- name: Instance
+- name: Create Custom Field - Instance
   netbox.netbox.netbox_custom_field:
     netbox_url: "{{ lookup('env', 'NETBOX_API') | default(nfc_pb_api_netbox_url) }}"
     netbox_token: "{{ lookup('env', 'NETBOX_TOKEN') | default(nfc_pb_api_netbox_token) }}"
@@ -18,9 +18,14 @@
     state: present
     validate_certs: "{{ lookup('env', 'NETBOX_VALIDATE_CERT') | default(nfc_pb_api_netbox_validate_cert) | default(true) | bool }}"
   delegate_to: localhost
+  failed_when: >
+    custom_field_tmp.msg != 'ui_visibility does not exist on existing object. Check to make sure valid field.'
+      and
+    custom_field_tmp.diff is not defined
+  register: custom_field_tmp
 
 
-- name: Namespace
+- name: Create Custom Field - Namespace
   netbox.netbox.netbox_custom_field:
     netbox_url: "{{ lookup('env', 'NETBOX_API') | default(nfc_pb_api_netbox_url) }}"
     netbox_token: "{{ lookup('env', 'NETBOX_TOKEN') | default(nfc_pb_api_netbox_token) }}"
@@ -38,3 +43,8 @@
     state: present
     validate_certs: "{{ lookup('env', 'NETBOX_VALIDATE_CERT') | default(nfc_pb_api_netbox_validate_cert) | default(true) | bool }}"
   delegate_to: localhost
+  failed_when: >
+    custom_field_tmp.msg != 'ui_visibility does not exist on existing object. Check to make sure valid field.'
+      and
+    custom_field_tmp.diff is not defined
+  register: custom_field_tmp

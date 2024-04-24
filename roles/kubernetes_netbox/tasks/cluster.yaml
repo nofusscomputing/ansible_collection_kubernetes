@@ -1,6 +1,8 @@
 ---
 
-- name: Configure Firewall
+# add cluster type kubernetes
+
+- name: Create Custom Field - Configure Firewall
   netbox.netbox.netbox_custom_field:
     netbox_url: "{{ lookup('env', 'NETBOX_API') | default(nfc_pb_api_netbox_url) }}"
     netbox_token: "{{ lookup('env', 'NETBOX_TOKEN') | default(nfc_pb_api_netbox_token) }}"
@@ -18,9 +20,14 @@
     state: present
     validate_certs: "{{ lookup('env', 'NETBOX_VALIDATE_CERT') | default(nfc_pb_api_netbox_validate_cert) | default(true) | bool }}"
   delegate_to: localhost
+  failed_when: >
+    custom_field_tmp.msg != 'ui_visibility does not exist on existing object. Check to make sure valid field.'
+      and
+    custom_field_tmp.diff is not defined
+  register: custom_field_tmp
 
 
-- name: ETCD Enabled
+- name: Create Custom Field - ETCD Enabled
   netbox.netbox.netbox_custom_field:
     netbox_url: "{{ lookup('env', 'NETBOX_API') | default(nfc_pb_api_netbox_url) }}"
     netbox_token: "{{ lookup('env', 'NETBOX_TOKEN') | default(nfc_pb_api_netbox_token) }}"
@@ -38,9 +45,14 @@
     state: present
     validate_certs: "{{ lookup('env', 'NETBOX_VALIDATE_CERT') | default(nfc_pb_api_netbox_validate_cert) | default(true) | bool }}"
   delegate_to: localhost
+  failed_when: >
+    custom_field_tmp.msg != 'ui_visibility does not exist on existing object. Check to make sure valid field.'
+      and
+    custom_field_tmp.diff is not defined
+  register: custom_field_tmp
 
 
-- name: Install OLM
+- name: Create Custom Field - Install OLM
   netbox.netbox.netbox_custom_field:
     netbox_url: "{{ lookup('env', 'NETBOX_API') | default(nfc_pb_api_netbox_url) }}"
     netbox_token: "{{ lookup('env', 'NETBOX_TOKEN') | default(nfc_pb_api_netbox_token) }}"
@@ -58,9 +70,14 @@
     state: present
     validate_certs: "{{ lookup('env', 'NETBOX_VALIDATE_CERT') | default(nfc_pb_api_netbox_validate_cert) | default(true) | bool }}"
   delegate_to: localhost
+  failed_when: >
+    custom_field_tmp.msg != 'ui_visibility does not exist on existing object. Check to make sure valid field.'
+      and
+    custom_field_tmp.diff is not defined
+  register: custom_field_tmp
 
 
-- name: Install Helm
+- name: Create Custom Field - Install Helm
   netbox.netbox.netbox_custom_field:
     netbox_url: "{{ lookup('env', 'NETBOX_API') | default(nfc_pb_api_netbox_url) }}"
     netbox_token: "{{ lookup('env', 'NETBOX_TOKEN') | default(nfc_pb_api_netbox_token) }}"
@@ -78,9 +95,14 @@
     state: present
     validate_certs: "{{ lookup('env', 'NETBOX_VALIDATE_CERT') | default(nfc_pb_api_netbox_validate_cert) | default(true) | bool }}"
   delegate_to: localhost
+  failed_when: >
+    custom_field_tmp.msg != 'ui_visibility does not exist on existing object. Check to make sure valid field.'
+      and
+    custom_field_tmp.diff is not defined
+  register: custom_field_tmp
 
 
-- name: Install KubeVirt
+- name: Create Custom Field - Install KubeVirt
   netbox.netbox.netbox_custom_field:
     netbox_url: "{{ lookup('env', 'NETBOX_API') | default(nfc_pb_api_netbox_url) }}"
     netbox_token: "{{ lookup('env', 'NETBOX_TOKEN') | default(nfc_pb_api_netbox_token) }}"
@@ -98,9 +120,14 @@
     state: present
     validate_certs: "{{ lookup('env', 'NETBOX_VALIDATE_CERT') | default(nfc_pb_api_netbox_validate_cert) | default(true) | bool }}"
   delegate_to: localhost
+  failed_when: >
+    custom_field_tmp.msg != 'ui_visibility does not exist on existing object. Check to make sure valid field.'
+      and
+    custom_field_tmp.diff is not defined
+  register: custom_field_tmp
 
 
-- name: KubeVirt Operator Replicas
+- name: Create Custom Field - KubeVirt Operator Replicas
   netbox.netbox.netbox_custom_field:
     netbox_url: "{{ lookup('env', 'NETBOX_API') | default(nfc_pb_api_netbox_url) }}"
     netbox_token: "{{ lookup('env', 'NETBOX_TOKEN') | default(nfc_pb_api_netbox_token) }}"
@@ -119,9 +146,14 @@
     state: present
     validate_certs: "{{ lookup('env', 'NETBOX_VALIDATE_CERT') | default(nfc_pb_api_netbox_validate_cert) | default(true) | bool }}"
   delegate_to: localhost
+  failed_when: >
+    custom_field_tmp.msg != 'ui_visibility does not exist on existing object. Check to make sure valid field.'
+      and
+    custom_field_tmp.diff is not defined
+  register: custom_field_tmp
 
 
-- name: Enable MetalLB
+- name: Create Custom Field - Enable MetalLB
   netbox.netbox.netbox_custom_field:
     netbox_url: "{{ lookup('env', 'NETBOX_API') | default(nfc_pb_api_netbox_url) }}"
     netbox_token: "{{ lookup('env', 'NETBOX_TOKEN') | default(nfc_pb_api_netbox_token) }}"
@@ -139,9 +171,14 @@
     state: present
     validate_certs: "{{ lookup('env', 'NETBOX_VALIDATE_CERT') | default(nfc_pb_api_netbox_validate_cert) | default(true) | bool }}"
   delegate_to: localhost
+  failed_when: >
+    custom_field_tmp.msg != 'ui_visibility does not exist on existing object. Check to make sure valid field.'
+      and
+    custom_field_tmp.diff is not defined
+  register: custom_field_tmp
 
 
-- name: Enable ServiceLB (klipper)
+- name: Create Custom Field - Enable ServiceLB (klipper)
   netbox.netbox.netbox_custom_field:
     netbox_url: "{{ lookup('env', 'NETBOX_API') | default(nfc_pb_api_netbox_url) }}"
     netbox_token: "{{ lookup('env', 'NETBOX_TOKEN') | default(nfc_pb_api_netbox_token) }}"
@@ -159,9 +196,14 @@
     state: present
     validate_certs: "{{ lookup('env', 'NETBOX_VALIDATE_CERT') | default(nfc_pb_api_netbox_validate_cert) | default(true) | bool }}"
   delegate_to: localhost
+  failed_when: >
+    custom_field_tmp.msg != 'ui_visibility does not exist on existing object. Check to make sure valid field.'
+      and
+    custom_field_tmp.diff is not defined
+  register: custom_field_tmp
 
 
-- name: Pod Subnet
+- name: Create Custom Field - Pod Subnet
   netbox.netbox.netbox_custom_field:
     netbox_url: "{{ lookup('env', 'NETBOX_API') | default(nfc_pb_api_netbox_url) }}"
     netbox_token: "{{ lookup('env', 'NETBOX_TOKEN') | default(nfc_pb_api_netbox_token) }}"
@@ -180,9 +222,14 @@
     state: present
     validate_certs: "{{ lookup('env', 'NETBOX_VALIDATE_CERT') | default(nfc_pb_api_netbox_validate_cert) | default(true) | bool }}"
   delegate_to: localhost
+  failed_when: >
+    custom_field_tmp.msg != 'ui_visibility does not exist on existing object. Check to make sure valid field.'
+      and
+    custom_field_tmp.diff is not defined
+  register: custom_field_tmp
 
 
-- name: Service Subnet
+- name: Create Custom Field - Service Subnet
   netbox.netbox.netbox_custom_field:
     netbox_url: "{{ lookup('env', 'NETBOX_API') | default(nfc_pb_api_netbox_url) }}"
     netbox_token: "{{ lookup('env', 'NETBOX_TOKEN') | default(nfc_pb_api_netbox_token) }}"
@@ -201,3 +248,8 @@
     state: present
     validate_certs: "{{ lookup('env', 'NETBOX_VALIDATE_CERT') | default(nfc_pb_api_netbox_validate_cert) | default(true) | bool }}"
   delegate_to: localhost
+  failed_when: >
+    custom_field_tmp.msg != 'ui_visibility does not exist on existing object. Check to make sure valid field.'
+      and
+    custom_field_tmp.diff is not defined
+  register: custom_field_tmp
