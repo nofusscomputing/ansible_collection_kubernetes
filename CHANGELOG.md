@@ -1,3 +1,18 @@
+## 1.7.0 (2024-04-24)
+
+### Feat
+
+- **kubernetes_netbox**: custom field bug work around
+- **services**: add netbox service fields
+- **role**: New role kubernetes_netbox
+
+### Fix
+
+- **nfc_kubernetes**: ensure install tasks run when job_tags specified
+- **facts**: gather required facts if not already available
+- **install**: correct template installed var
+- **install**: as part of install check, confirm service
+
 ## 1.6.0 (2024-03-29)
 
 ### Feat
@@ -58,8 +73,6 @@
 - **handler**: remove old k8s code causing handler to fail
 - **handler**: kubernetes restart handler now using updated node type vars
 - **config**: if hostname=localhost use hostname command to fetch hostname
-- limit the use of master group
-- add missing dependency ansible.posix
 
 ## 1.1.1 (2024-03-13)
 
@@ -78,5 +91,3 @@
 ### Fix
 
 - **ci**: ensure correct package name is used
-
-## 1.0.0 (2024-03-13)
