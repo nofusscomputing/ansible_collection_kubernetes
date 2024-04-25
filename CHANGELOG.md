@@ -1,3 +1,9 @@
+## 1.7.2 (2024-04-25)
+
+### Fix
+
+- **nfc_kubernetes**: adjust some tasks to run during checkmode
+
 ## 1.7.1 (2024-04-24)
 
 ### Fix
@@ -75,17 +81,9 @@
 ### Fix
 
 - **readme**: update gitlab links to new loc
-- **configure**: dont attempt to configure firewall if install=false
-- **handler**: remove old k8s code causing handler to fail
 
 ## 1.1.1 (2024-03-13)
 
 ### Fix
 
 - don't check hostname for localhost
-
-## 1.1.0 (2024-03-13)
-
-### Feat
-
-- add role readme and fix gitlab release job
