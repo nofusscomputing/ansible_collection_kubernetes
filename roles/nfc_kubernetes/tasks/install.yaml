@@ -4,6 +4,7 @@
   ansible.builtin.command:
     cmd: hostname
   changed_when: false
+  check_mode: false
   register: hostname_to_check
   tags:
     - always
@@ -18,8 +19,6 @@
     - always
   when: >
     inventory_hostname != 'localhost'
-      and
-    not ansible_check_mode
 
 
 - name: Testing Env Variables
@@ -27,6 +26,7 @@
     ansible_default_ipv4: {
       "address": "127.0.0.1"
     }
+  check_mode: false
   tags:
     - always
   when: >
