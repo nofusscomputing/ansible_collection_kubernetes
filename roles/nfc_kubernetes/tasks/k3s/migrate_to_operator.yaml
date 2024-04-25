@@ -110,6 +110,7 @@
         owner: root
         group: 'root'
       changed_when: false
+      check_mode: false
       become: true
       delegate_to: localhost
       loop: "{{ nfc_kubernetes_install_architectures | dict2items }}"
