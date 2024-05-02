@@ -304,16 +304,22 @@
   when: >
     file_cached_k3s_binary.stat.checksum | default('0') != node_k3s.desired_hash
 
-
-- name: Download K3s Binary
-  ansible.builtin.uri:
-    url: |-
+  # Workaround. See: https://github.com/ansible/awx/issues/15161
+- name: Build K3s Download URL
+  ansible.builtin.set_fact:
+    cacheable: false
+    url_download_k3s: |-
       https://github.com/k3s-io/k3s/releases/download/
         {{- node_k3s.desired_version | urlencode -}}
       /k3s
       {%- if cpu_arch.key == 'aarch64' -%}
       -arm64
       {%- endif %}
+
+
+- name: Download K3s Binary
+  ansible.builtin.uri:
+    url: "{{ url_download_k3s | string }}"
     method: GET
     return_content: false
     status_code:
