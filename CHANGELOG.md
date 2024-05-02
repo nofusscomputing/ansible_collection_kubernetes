@@ -1,3 +1,9 @@
+## 1.8.1-a2 (2024-05-02)
+
+### Fix
+
+- **nfc_kubernetes**: cast url var as list
+
 ## 1.8.1-a1 (2024-05-02)
 
 ### Fix
