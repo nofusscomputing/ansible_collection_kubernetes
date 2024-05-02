@@ -1,3 +1,9 @@
+## 1.8.0 (2024-05-02)
+
+### Feat
+
+- **nfc_kubernetes**: build url and on use cast as string
+
 ## 1.7.2 (2024-04-25)
 
 ### Fix
@@ -56,10 +62,6 @@
 
 ## 1.3.0 (2024-03-18)
 
-### Feat
-
-- dont attempt to install if already installed
-
 ### Fix
 
 - **handler**: add missing 'reboot_host' handler
@@ -75,15 +77,3 @@
 ### Fix
 
 - **config**: use correct var name when setting node name
-
-## 1.1.2 (2024-03-13)
-
-### Fix
-
-- **readme**: update gitlab links to new loc
-
-## 1.1.1 (2024-03-13)
-
-### Fix
-
-- don't check hostname for localhost
