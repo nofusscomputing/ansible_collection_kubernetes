@@ -304,34 +304,16 @@
   when: >
     file_cached_k3s_binary.stat.checksum | default('0') != node_k3s.desired_hash
 
-  # Workaround. See: https://github.com/ansible/awx/issues/15161
-- name: Build K3s Download URL
-  ansible.builtin.set_fact:
-    cacheable: false
-    url_download_k3s: |-
-      [
-        {%- for key, value in nfc_kubernetes_install_architectures | dict2items -%}
-        "https://github.com/k3s-io/k3s/releases/download/
-          {{- node_k3s.desired_version | urlencode -}}
-        /k3s
-        {%- if key == 'aarch64' -%}
-        -arm64
-        {%- endif %}",
-        {%- endfor -%}
-      ]
-  changed_when: false
-  check_mode: false
-  delegate_to: localhost
-  loop: "{{ nfc_kubernetes_install_architectures | dict2items }}"
-  loop_control:
-    loop_var: cpu_arch
-  vars:
-    ansible_connection: local
-
 
 - name: Download K3s Binary
   ansible.builtin.uri:
-    url: "{{ url | string }}"
+    url: |-
+      https://github.com/k3s-io/k3s/releases/download/
+        {{- node_k3s.desired_version | urlencode -}}
+      /k3s
+      {%- if cpu_arch.key == 'aarch64' -%}
+      -arm64
+      {%- endif %}
     method: GET
     return_content: false
     status_code:
@@ -355,9 +337,9 @@
     )
   run_once: true
   when: ansible_os_family == 'Debian'
-  loop: "{{ url_download_k3s | from_yaml }}"
+  loop: "{{ nfc_kubernetes_install_architectures | dict2items }}"
   loop_control:
-    loop_var: url
+    loop_var: cpu_arch
   vars:
     ansible_connection: local
 
