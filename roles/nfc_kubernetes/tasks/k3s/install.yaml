@@ -355,7 +355,7 @@
     )
   run_once: true
   when: ansible_os_family == 'Debian'
-  loop: "{{ url_download_k3s }}"
+  loop: "{{ url_download_k3s | from_yaml }}"
   loop_control:
     loop_var: url
   vars:
