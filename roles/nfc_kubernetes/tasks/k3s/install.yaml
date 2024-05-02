@@ -309,23 +309,35 @@
   ansible.builtin.set_fact:
     cacheable: false
     url_download_k3s: |-
-      https://github.com/k3s-io/k3s/releases/download/
-        {{- node_k3s.desired_version | urlencode -}}
-      /k3s
-      {%- if cpu_arch.key == 'aarch64' -%}
-      -arm64
-      {%- endif %}
+      [
+        {%- for key, value in nfc_kubernetes_install_architectures | dict2items -%}
+        "https://github.com/k3s-io/k3s/releases/download/
+          {{- node_k3s.desired_version | urlencode -}}
+        /k3s
+        {%- if key == 'aarch64' -%}
+        -arm64
+        {%- endif %}",
+        {%- endfor -%}
+      ]
+  changed_when: false
+  check_mode: false
+  delegate_to: localhost
+  loop: "{{ nfc_kubernetes_install_architectures | dict2items }}"
+  loop_control:
+    loop_var: cpu_arch
+  vars:
+    ansible_connection: local
 
 
 - name: Download K3s Binary
   ansible.builtin.uri:
-    url: "{{ url_download_k3s | string }}"
+    url: "{{ url | string }}"
     method: GET
     return_content: false
     status_code:
       - 200
       - 304
-    dest: "/tmp/k3s.{{ cpu_arch.key }}"
+    dest: "/tmp/k3s.{{ ansible_architecture }}"
     mode: "744"
   changed_when: not ansible_check_mode
   check_mode: false
@@ -334,7 +346,7 @@
   register: k3s_download_files
   delegate_to: localhost
   failed_when: >
-    (lookup('ansible.builtin.file', '/tmp/k3s.' + cpu_arch.key) | hash('sha256') | string) != node_k3s.desired_hash
+    (lookup('ansible.builtin.file', '/tmp/k3s.' + ansible_architecture) | hash('sha256') | string) != node_k3s.desired_hash
       and
     (
       k3s_download_files.status | int != 200
@@ -343,9 +355,9 @@
     )
   run_once: true
   when: ansible_os_family == 'Debian'
-  loop: "{{ nfc_kubernetes_install_architectures | dict2items }}"
+  loop: "{{ url_download_k3s }}"
   loop_control:
-    loop_var: cpu_arch
+    loop_var: url
   vars:
     ansible_connection: local
 
