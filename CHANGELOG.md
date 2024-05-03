@@ -1,3 +1,15 @@
+## 1.8.1-a2 (2024-05-02)
+
+### Fix
+
+- **nfc_kubernetes**: cast url var as list
+
+## 1.8.1-a1 (2024-05-02)
+
+### Fix
+
+- **nfc_kubernetes**: correct url build to loop through all cpu arch
+
 ## 1.8.0 (2024-05-02)
 
 ### Feat
