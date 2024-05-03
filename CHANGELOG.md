@@ -1,13 +1,12 @@
-## 1.8.1-a2 (2024-05-02)
+## 1.9.0 (2024-05-03)
+
+### Feat
+
+- **nfc_kubernetes**: add debug out to k3s download on failure
 
 ### Fix
 
 - **nfc_kubernetes**: cast url var as list
-
-## 1.8.1-a1 (2024-05-02)
-
-### Fix
-
 - **nfc_kubernetes**: correct url build to loop through all cpu arch
 
 ## 1.8.0 (2024-05-02)
@@ -77,15 +76,5 @@
 ### Fix
 
 - **handler**: add missing 'reboot_host' handler
-- **firewall**: ensure slave nodes can access ALL masters API point
-- **firewall**: dont add rules for disabled features
 
 ## 1.2.0 (2024-03-16)
-
-### Feat
-
-- **firewall**: use collection nofusscomputing.firewall to configure kubernetes firewall
-
-### Fix
-
-- **config**: use correct var name when setting node name
