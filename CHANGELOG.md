@@ -1,3 +1,20 @@
+## 1.10.0 (2024-05-03)
+
+### Feat
+
+- **nfc_kubernetes**: new variable 'nfc_role_kubernetes_node_prime' to denote the hostname of the prime node
+
+### Fix
+
+- **nfc_kubernetes**: correct 'Create Required directories' when logic
+- **nfc_kubernetes**: only run tasks on master nodes
+- **nfc_kubernetes**: only run tasks on prime node
+- **nfc_kubernetes**: ensure correct node type selection for installation
+
+### Refactor
+
+- **nfc_kubernetes**: remove usage of prime node name over is_prime var
+
 ## 1.9.0 (2024-05-03)
 
 ### Feat
@@ -32,8 +49,6 @@
 ### Feat
 
 - **kubernetes_netbox**: custom field bug work around
-- **services**: add netbox service fields
-- **role**: New role kubernetes_netbox
 
 ### Fix
 
@@ -49,7 +64,6 @@
 - **test**: add integration test. playbook install
 - add retry=3 delay=10 secs to all ansible url modules
 - **upgrade**: If upgrade occurs, dont run remaining tasks
-- support upgrading cluster
 
 ### Fix
 
@@ -72,9 +86,3 @@
 - **install**: "ansible_check_mode=true" no hostname check
 
 ## 1.3.0 (2024-03-18)
-
-### Fix
-
-- **handler**: add missing 'reboot_host' handler
-
-## 1.2.0 (2024-03-16)
