@@ -53,8 +53,8 @@ nfc_role_kubernetes_resolv_conf_file: /etc/resolv.conf
 nfc_role_kubernetes_pod_subnet: 172.16.248.0/21
 nfc_role_kubernetes_service_subnet: 172.16.244.0/22
 
-nfc_role_kubernetes_prime: true                         # Mandatory for a node designated as the prime master node
-nfc_role_kubernetes_master: true                        # Mandatory for a node designated as a master node and the prime master node
+nfc_role_kubernetes_prime: false                         # Mandatory for a node designated as the prime master node
+nfc_role_kubernetes_master: false                        # Mandatory for a node designated as a master node and the prime master node
 nfc_role_kubernetes_worker: false                       # Mandatory for a node designated as a worker node
 
 ############################################################################################################
