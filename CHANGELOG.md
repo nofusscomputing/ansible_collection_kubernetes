@@ -1,3 +1,9 @@
+## 1.10.2 (2024-05-03)
+
+### Fix
+
+- **nfc_kubernetes**: set default for var so task 'Copy Template' when clause doesn't fail task with undefined var
+
 ## 1.10.1 (2024-05-03)
 
 ### Fix
@@ -59,27 +65,19 @@
 ### Fix
 
 - **nfc_kubernetes**: ensure install tasks run when job_tags specified
-- **facts**: gather required facts if not already available
 
 ## 1.6.0 (2024-03-29)
 
 ### Feat
 
 - **test**: add integration test. playbook install
-- add retry=3 delay=10 secs to all ansible url modules
 
 ### Fix
 
 - **docs**: use correct badge query url
-
-### Refactor
-
-- **galaxy**: for dependent collections prefix with `>=` so as to not cause version lock
 
 ## 1.5.0 (2024-03-21)
 
 ### Feat
 
 - **collection**: nofusscomputing.firewall update 1.0.1 -> 1.1.0
-
-## 1.4.0 (2024-03-20)
