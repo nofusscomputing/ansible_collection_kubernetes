@@ -1,14 +1,28 @@
 ---
 
+- name: Default Variable adjustment [Probable Single Node Install]
+  ansible.builtin.set_fact:
+    cacheable: false
+    nfc_role_kubernetes_prime: true
+    nfc_role_kubernetes_master: true
+    nfc_role_kubernetes_node_prime: "{{ inventory_hostname }}"
+  when: >
+    not nfc_role_kubernetes_worker | bool
+      and
+    not nfc_role_kubernetes_prime | bool
+      and
+    not nfc_role_kubernetes_master | bool
+
+
 - name: Install/Configure Kubernetes Prime Master Node
   ansible.builtin.include_tasks:
     file: install.yaml
   tags:
     - always
   when:
-    kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
-      and
     nfc_role_kubernetes_prime | bool
+      and
+    not nfc_role_kubernetes_worker | bool
       and
     not kubernetes_installed | default(false)
 
@@ -19,9 +33,11 @@
   tags:
     - always
   when:
-    kubernetes_config.cluster.prime.name | default(inventory_hostname) != inventory_hostname
-      and
     nfc_role_kubernetes_master | bool
+      and
+    not nfc_role_kubernetes_prime | bool
+      and
+    not nfc_role_kubernetes_worker | bool
       and
     not kubernetes_installed | default(false)
 

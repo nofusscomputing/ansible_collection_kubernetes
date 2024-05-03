@@ -37,6 +37,8 @@
     - | # enter test container
       docker exec -i test_image_${CI_JOB_ID} ps aux
     - docker ps
+    - docker exec -i test_image_${CI_JOB_ID} bash -c 'apt update || true'
+    - docker exec -i test_image_${CI_JOB_ID} bash -c 'apt update || true'
     - docker exec -i test_image_${CI_JOB_ID} apt update
     - docker exec -i test_image_${CI_JOB_ID} apt install -y --no-install-recommends python3-pip net-tools dnsutils iptables
     - |
