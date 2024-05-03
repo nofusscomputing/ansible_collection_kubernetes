@@ -40,7 +40,7 @@
         dest: "/etc/iptables-reloader/rules.d/iptables-kubernetes.rules"
         notify: firewall_reloader
         when: |-
-          {%- if firewall_installed -%}
+          {%- if firewall_installed | default(false) -%}
 
             {{ firewall_rules_dir_metadata.stat.exists }}
 
