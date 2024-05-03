@@ -113,18 +113,19 @@
         state: directory
         mode: 700
         when: >
-          nfc_role_kubernetes_master | bool
+          {{ nfc_role_kubernetes_master | bool }}
       - name: /var/lib/rancher/k3s/server/manifests
         state: directory
         mode: 700
         when: >
-          nfc_role_kubernetes_master | bool
+          {{ nfc_role_kubernetes_master | bool }}
       - name: /var/lib/rancher/k3s/ansible
         state: directory
         mode: 700
         when: >
-          nfc_role_kubernetes_master | bool
-  when: "{{ item.when | default(true) | bool }}"
+          {{ nfc_role_kubernetes_master | bool }}
+  when: >
+    item.when | default(true)
 
 
 - name: Add sysctl net.ipv4.ip_forward
