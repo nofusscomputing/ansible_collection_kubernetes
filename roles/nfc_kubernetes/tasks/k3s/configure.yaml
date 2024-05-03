@@ -34,7 +34,7 @@
 
       - src: kubernetes-manifest-rbac.yaml.j2
         dest: /var/lib/rancher/k3s/server/manifests/rbac-authorization-common.yaml
-        when: "{{ kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname }}"
+        when: "{{ nfc_role_kubernetes_prime | bool }}"
 
       - src: iptables-kubernetes.rules.j2
         dest: "/etc/iptables-reloader/rules.d/iptables-kubernetes.rules"
@@ -71,7 +71,7 @@
     owner: root
     group: root
     mode: '700'
-  delegate_to: "{{ kubernetes_config.cluster.prime.name }}"
+  delegate_to: "{{ nfc_role_kubernetes_node_prime }}"
   when:
     kubernetes_config.hosts[inventory_hostname].labels | default([]) | list | length > 0
       or
