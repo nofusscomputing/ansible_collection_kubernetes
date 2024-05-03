@@ -579,7 +579,7 @@
         'operator_calico' in ansible_run_tags
       )
         or
-      not file_calico_yaml_metadata.stat.exists
+      not file_calico_yaml_metadata.stat.exists | default(false)
     )
       and
     'calico_manifest' not in ansible_run_tags
