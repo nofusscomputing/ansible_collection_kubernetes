@@ -510,7 +510,7 @@
         dest: /var/lib/rancher/k3s/server/manifests/calico.yaml
         when: >
           {{
-            kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
+            nfc_role_kubernetes_prime | bool
               and
             (
               (
@@ -557,7 +557,7 @@
       /tmp/install.sh {% if nfc_role_kubernetes_etcd_enabled %}--cluster-init{% endif %}
   changed_when: false
   when: >
-    kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
+    nfc_role_kubernetes_prime | bool
       and
     not node_k3s.installed | bool
       and
@@ -583,7 +583,7 @@
       and
     'calico_manifest' not in ansible_run_tags
       and
-    kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
+    nfc_role_kubernetes_prime | bool
       and
     not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
 
@@ -604,7 +604,7 @@
   when: >-
     nfc_kubernetes_enable_metallb | default(false) | bool
       and
-    kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
+    nfc_role_kubernetes_prime | bool
       and
     not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
 
@@ -660,7 +660,7 @@
     install_olm.rc == 1
   register: install_olm
   when: >
-    kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
+    nfc_role_kubernetes_prime | bool
       and
     nfc_role_kubernetes_install_olm | default(false) | bool
       and
@@ -690,7 +690,7 @@
   failed_when: false
   register: install_olm
   when: >
-    kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
+    nfc_role_kubernetes_prime | bool
       and
     'olm_uninstall' in ansible_run_tags
       and
@@ -703,7 +703,7 @@
   changed_when: false
   failed_when: false    # New cluster will fail
   when: >
-    kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
+    nfc_role_kubernetes_prime | bool
       and
     kubernetes_config.cluster.networking.encrypt | default(false) | bool
       and
@@ -754,7 +754,7 @@
   when: >
     nfc_role_kubernetes_master | default(false) | bool
       and
-    not kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
+    not nfc_role_kubernetes_prime | bool
       and
     not node_k3s.installed | bool
       and
@@ -776,7 +776,7 @@
   when: >
     not nfc_role_kubernetes_master | default(false) | bool
       and
-    not kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
+    not nfc_role_kubernetes_prime | bool
       and
     not node_k3s.installed | bool
       and
