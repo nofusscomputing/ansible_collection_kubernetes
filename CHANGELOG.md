@@ -1,3 +1,9 @@
+## 1.10.1 (2024-05-03)
+
+### Fix
+
+- **nfc_kubernetes**: set default for var so when clause doesn't fail task with undefined var
+
 ## 1.10.0 (2024-05-03)
 
 ### Feat
@@ -54,8 +60,6 @@
 
 - **nfc_kubernetes**: ensure install tasks run when job_tags specified
 - **facts**: gather required facts if not already available
-- **install**: correct template installed var
-- **install**: as part of install check, confirm service
 
 ## 1.6.0 (2024-03-29)
 
@@ -63,7 +67,6 @@
 
 - **test**: add integration test. playbook install
 - add retry=3 delay=10 secs to all ansible url modules
-- **upgrade**: If upgrade occurs, dont run remaining tasks
 
 ### Fix
 
@@ -80,9 +83,3 @@
 - **collection**: nofusscomputing.firewall update 1.0.1 -> 1.1.0
 
 ## 1.4.0 (2024-03-20)
-
-### Feat
-
-- **install**: "ansible_check_mode=true" no hostname check
-
-## 1.3.0 (2024-03-18)
