@@ -5,6 +5,7 @@
     cacheable: false
     nfc_role_kubernetes_prime: true
     nfc_role_kubernetes_master: true
+    nfc_role_kubernetes_node_prime: "{{ inventory_hostname }}"
   when: >
     not nfc_role_kubernetes_worker | bool
       and

@@ -620,7 +620,7 @@
         exit 127;
       fi
     executable: /bin/bash
-  delegate_to: "{{ kubernetes_config.cluster.prime.name | default(inventory_hostname) }}"
+  delegate_to: "{{ nfc_role_kubernetes_node_prime }}"
   run_once: true
   register: kubernetes_ready_check
   retries: 30
@@ -723,7 +723,7 @@
 - name: Fetch Join Token
   ansible.builtin.slurp:
     src: /var/lib/rancher/k3s/server/token
-  delegate_to: "{{ kubernetes_config.cluster.prime.name | default(inventory_hostname) }}"
+  delegate_to: "{{ nfc_role_kubernetes_node_prime }}"
   run_once: true
   register: k3s_join_token
   no_log: true # Value is sensitive
@@ -734,7 +734,7 @@
 - name: Create Token fact
   ansible.builtin.set_fact:
     k3s_join_token: "{{ k3s_join_token.content | b64decode | replace('\n', '') }}"
-  delegate_to: "{{ kubernetes_config.cluster.prime.name | default(inventory_hostname) }}"
+  delegate_to: "{{ nfc_role_kubernetes_node_prime }}"
   run_once: true
   no_log: true # Value is sensitive
   when: >
@@ -769,7 +769,7 @@
       INSTALL_K3S_SKIP_DOWNLOAD=true \
       INSTALL_K3S_VERSION="v{{ node_k3s.desired_version }}" \
       K3S_TOKEN="{{ k3s_join_token }}" \
-      K3S_URL="https://{{ hostvars[kubernetes_config.cluster.prime.name | default(inventory_hostname)].ansible_host }}:6443" \
+      K3S_URL="https://{{ hostvars[nfc_role_kubernetes_node_prime].ansible_host }}:6443" \
       /tmp/install.sh -
     executable: /bin/bash
   changed_when: false
