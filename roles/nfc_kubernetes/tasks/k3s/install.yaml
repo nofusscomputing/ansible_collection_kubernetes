@@ -15,12 +15,16 @@
   ansible.builtin.stat:
     name: /var/lib/rancher/k3s/server/manifests/calico.yaml
   register: file_calico_yaml_metadata
+  when: >
+    nfc_role_kubernetes_prime | bool
 
 
 - name: Check for calico Operator deployment manifest
   ansible.builtin.stat:
     name: /var/lib/rancher/k3s/ansible/deployment-manifest-calico_operator.yaml
   register: file_calico_operator_yaml_metadata
+  when: >
+    nfc_role_kubernetes_prime | bool
 
 
 - name: Install dependent packages
