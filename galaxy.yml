@@ -46,7 +46,7 @@ tags:
 dependencies:
   ansible.posix: '>=1.5.4'
   kubernetes.core: '>=3.0.0'
-  nofusscomputing.firewall: '>=1.1.0'
+  nofusscomputing.firewall: '>=1.1.1'
   netbox.netbox: '>=3.16.0'
 
 
