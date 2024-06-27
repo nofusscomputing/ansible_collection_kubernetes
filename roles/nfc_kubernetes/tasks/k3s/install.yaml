@@ -128,7 +128,14 @@
     item.when | default(true)
 
 
-- name: Add sysctl net.ipv4.ip_forward
+- name: Check if IPv6 Enabled
+  ansible.builtin.stat:
+    path: /proc/sys/net/ipv6/conf/all/disable_ipv6
+  register: ipv6_file
+  failed_when: false
+
+
+- name: Add sysctl settings
   ansible.posix.sysctl:
     name: "{{ item.name }}"
     value: "{{ item.value }}"
@@ -147,8 +154,11 @@
         value: '512'
       - name: net.ipv6.conf.all.disable_ipv6
         value: '1'
-  when:
-    - ansible_os_family == 'Debian'
+        when: "{{ ipv6_file.stat.exists }}"
+  when: >
+    ansible_os_family == 'Debian'
+      and
+    item.when | default(true) | bool
 
 
 - name: Check for Network Manager Directory
