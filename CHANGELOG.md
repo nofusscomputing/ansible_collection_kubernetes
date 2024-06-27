@@ -1,3 +1,9 @@
+## 1.11.0 (2024-06-27)
+
+### Feat
+
+- **firewall**: update collection nfc_firewall 1.1.0 -> 1.1.1
+
 ## 1.10.3 (2024-06-27)
 
 ### Fix
@@ -63,13 +69,3 @@
 - add role readme
 
 ## 1.7.0 (2024-04-24)
-
-### Feat
-
-- **kubernetes_netbox**: custom field bug work around
-
-## 1.6.0 (2024-03-29)
-
-### Fix
-
-- **docs**: use correct badge query url
