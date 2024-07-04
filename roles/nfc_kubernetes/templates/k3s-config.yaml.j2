@@ -9,7 +9,7 @@
 {%- if 
   nfc_role_kubernetes_master
     or
-  nfc_role_kubernetes_prime | default(inventory_hostname) == inventory_hostname
+  nfc_role_kubernetes_prime | default(inventory_hostname) == inventory_hostname | default(false) | boolean
 -%}
 
   {%
@@ -197,7 +197,7 @@
     }) -%}
 
   {%- elif 
-    nfc_role_kubernetes_prime != inventory_hostname
+    nfc_role_kubernetes_prime != inventory_hostname | default(false) | boolean
       and
     not node_k3s.installed
   -%}
@@ -241,7 +241,7 @@
 {%- if 
   nfc_role_kubernetes_master
     or
-  nfc_role_kubernetes_prime | default(inventory_hostname) == inventory_hostname
+  nfc_role_kubernetes_prime | default(inventory_hostname) == inventory_hostname | default(false) | boolean
 -%}
 
   {%- set servers_config = servers_config | combine( all_nodes_config ) -%}
