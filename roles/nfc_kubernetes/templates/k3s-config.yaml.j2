@@ -11,11 +11,11 @@
     or
   nfc_role_kubernetes_prime | default(false) | bool
 -%}
-  {%
-
-  set prime_hostname = inventory_hostname
-
-  -%}
+##  {%
+##
+##  set prime_hostname = inventory_hostname
+##
+##  -%}
   {%
 
   set kube_apiserver_arg = [
@@ -207,7 +207,7 @@
   -%}
 
     {%- set server = (server | default([])) + [
-      "https://" + hostvars[prime_hostname].ansible_host + ":6443"
+      "https://" + hostvars[inventory_hostname].ansible_host + ":6443"
     ] -%}
 
     {%- set all_nodes_config = all_nodes_config | combine({
