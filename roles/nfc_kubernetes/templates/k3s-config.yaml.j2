@@ -9,7 +9,7 @@
 {%- if 
   nfc_role_kubernetes_master
     or
-  nfc_role_kubernetes_prime !=false
+  nfc_role_kubernetes_prime | default(false) | bool
 -%}
   {%
 
@@ -201,7 +201,7 @@
     }) -%}
 
   {%- elif 
-    nfc_role_kubernetes_prime !=false
+    nfc_role_kubernetes_prime | default(false) | bool
       and
     not node_k3s.installed
   -%}
@@ -246,7 +246,7 @@
 {%- if 
   nfc_role_kubernetes_master
     or
-  nfc_role_kubernetes_prime !=false
+  nfc_role_kubernetes_prime | default(false) | bool
 -%}
 
   {%- set servers_config = servers_config | combine( all_nodes_config ) -%}
