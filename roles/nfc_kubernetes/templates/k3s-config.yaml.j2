@@ -9,7 +9,7 @@
 {%- if 
   nfc_role_kubernetes_master
     or
-  nfc_role_kubernetes_prime | default(false) | bool
+  nfc_role_kubernetes_prime | default(true) | bool
 -%}
   {%
 
@@ -196,9 +196,11 @@
     }) -%}
 
   {%- elif 
-    nfc_role_kubernetes_prime | default(false) | bool
+    nfc_role_kubernetes_prime | default(true) | bool
       and
     not node_k3s.installed
+      and
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
   -%}
 
     {%- set server = (server | default([])) + [
@@ -241,7 +243,7 @@
 {%- if 
   nfc_role_kubernetes_master
     or
-  nfc_role_kubernetes_prime | default(false) | bool
+  nfc_role_kubernetes_prime | default(true) | bool
 -%}
 
   {%- set servers_config = servers_config | combine( all_nodes_config ) -%}
