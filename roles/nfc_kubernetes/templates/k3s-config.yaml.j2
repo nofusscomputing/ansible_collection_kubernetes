@@ -212,7 +212,7 @@
     {% endfor %}
     
     {%- set server = (server | default([])) + [
-      "https://" + hostvars[ns.prime_name].ansible_host + ":6443"
+      "https://" + ns.prime_name.ansible_host + ":6443"
     ] -%}
 
     {%- set all_nodes_config = all_nodes_config | combine({
