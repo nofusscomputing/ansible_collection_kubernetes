@@ -202,7 +202,7 @@
   -%}
 
     {%- set server = (server | default([])) + [
-      "https://" + hostvars[inventory_hostname].ansible_host + ":6443"
+      "https://" + hostvars[nfc_role_kubernetes_node_prime].ansible_host + ":6443"
     ] -%}
 
     {%- set all_nodes_config = all_nodes_config | combine({
