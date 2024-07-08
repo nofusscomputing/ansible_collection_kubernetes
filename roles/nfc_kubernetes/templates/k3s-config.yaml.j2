@@ -206,7 +206,9 @@
     {% for hostname, values in hostvars.iteritems() %}
       
       {%- if values.nfc_role_kubernetes_node_prime ==true -%}
-        {% set ns.prime_name = hostname %}
+
+        {%- set ns.prime_name = hostname -%}
+
       {%- endif -%}
 
     {% endfor %}
