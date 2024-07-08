@@ -203,7 +203,7 @@
 
     {%- set ns = namespace(prime_name) -%}
 
-    {% for hostname, values in hostvars.iteritems() %}
+    {%- for hostname, values in hostvars.iteritems() -%}
       
       {%- if values.nfc_role_kubernetes_node_prime ==true -%}
 
