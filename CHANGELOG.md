@@ -1,3 +1,27 @@
+## 1.12.0 (2024-07-08)
+
+### Feat
+
+- **kubernetes_role**: nfc_role_kubernetes_prime cast type to bool
+
+### Fix
+
+- **kubernetes_roles**: conditional checks for prime
+- **kubernetes_roles**: conditional checks for prime
+- **kubernetes_roles**: conditional checks for prime
+- **kubernetes_roles**: clean up white space
+- **kubernetes_roles**: clean up white space
+- **kubernetes_roles**: clean up white space
+- **kubernetes_roles**: clean up white space
+- **kubernetes_role**: delete leftover ]
+- **kubernetes_role**: Change "https://" + hostvars[ns.prime_name].ansible_host + ":6443" -> "https://" + ns.prime_name.ansible_host + ":6443"
+- **kubernetes_role**: get prime hostname
+- **kubernetes_role**: set server var -> "https://" + hostvars[nfc_role_kubernetes_node_prime].ansible_host + ":6443"
+- **kubernetes_role**: remove not nfc_role_kubernetes_cluster_upgraded | default(true) | bool section
+- **kubernetes_role**: undo previous change
+- **kubernetes_role**: remove commented out section
+- **kubernetes_roles**: use inventory_hostname
+
 ## 1.11.0 (2024-06-27)
 
 ### Feat
@@ -67,5 +91,3 @@
 ### Fix
 
 - add role readme
-
-## 1.7.0 (2024-04-24)
