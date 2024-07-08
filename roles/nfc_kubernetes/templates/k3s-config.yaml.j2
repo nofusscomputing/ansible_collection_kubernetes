@@ -10,6 +10,8 @@
   nfc_role_kubernetes_master
     or
   nfc_role_kubernetes_prime | default(true) | bool
+    and
+  not nfc_role_kubernetes_worker
 -%}
   {%
 
