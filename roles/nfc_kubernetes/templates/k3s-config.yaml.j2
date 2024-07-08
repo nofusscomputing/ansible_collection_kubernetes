@@ -9,9 +9,10 @@
 {%- if 
   nfc_role_kubernetes_master
     or
-  kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
+  nfc_role_kubernetes_prime | default(true) | bool
+    and
+  not nfc_role_kubernetes_worker
 -%}
-
   {%
 
   set kube_apiserver_arg = [
@@ -197,13 +198,28 @@
     }) -%}
 
   {%- elif 
-    kubernetes_config.cluster.prime.name != inventory_hostname
+    nfc_role_kubernetes_prime | default(true) | bool
       and
     not node_k3s.installed
+      and
+    not nfc_role_kubernetes_worker
+
   -%}
 
+    {%- set ns = namespace(prime_name) -%}
+
+    {%- for hostname, values in hostvars.iteritems() -%}
+      
+      {%- if values.nfc_role_kubernetes_node_prime ==true -%}
+
+        {%- set ns.prime_name = hostname -%}
+
+      {%- endif -%}
+
+    {%- endfor -%}
+    
     {%- set server = (server | default([])) + [
-      "https://" + hostvars[kubernetes_config.cluster.prime.name].ansible_host + ":6443"
+      "https://" + ns.prime_name.ansible_host + ":6443"
     ] -%}
 
     {%- set all_nodes_config = all_nodes_config | combine({
@@ -235,13 +251,18 @@
 
 {%- endif -%}
 
+
 {# EoF All Nodes #}
 
 
 {%- if 
-  nfc_role_kubernetes_master
-    or
-  kubernetes_config.cluster.prime.name | default(inventory_hostname) == inventory_hostname
+  (
+    nfc_role_kubernetes_master
+      or
+    nfc_role_kubernetes_prime | default(true) | bool
+  )
+    and
+  not nfc_role_kubernetes_worker
 -%}
 
   {%- set servers_config = servers_config | combine( all_nodes_config ) -%}
