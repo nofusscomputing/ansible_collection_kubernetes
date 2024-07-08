@@ -201,7 +201,7 @@
     not node_k3s.installed
   -%}
 
-    {% set ns = namespace(prime_name) %}
+    {%- set ns = namespace(prime_name) -%}
 
     {% for hostname, values in hostvars.iteritems() %}
       
