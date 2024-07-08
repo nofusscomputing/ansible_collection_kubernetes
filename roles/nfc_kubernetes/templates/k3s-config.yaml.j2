@@ -199,6 +199,9 @@
     nfc_role_kubernetes_prime | default(true) | bool
       and
     not node_k3s.installed
+      and
+    not nfc_role_kubernetes_worker
+
   -%}
 
     {%- set ns = namespace(prime_name) -%}
