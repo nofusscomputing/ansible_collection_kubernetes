@@ -552,6 +552,14 @@
 #     ipv6: true
 
 
+- name: Set IP6Tables to legacy mode
+  ansible.builtin.command:
+    cmd: update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
+  changed_when: false
+  when: >
+    not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
+
+
 - name: Set IPTables to legacy mode
   ansible.builtin.command:
     cmd: update-alternatives --set iptables /usr/sbin/iptables-legacy
