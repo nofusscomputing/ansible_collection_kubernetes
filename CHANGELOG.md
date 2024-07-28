@@ -1,8 +1,11 @@
-## 1.12.0 (2024-07-08)
+## 1.13.0 (2024-07-28)
 
 ### Feat
 
-- **kubernetes_role**: nfc_role_kubernetes_prime cast type to bool
+- **nfc_kubernetes**: prime node to always be labeled prime
+- **nfc_kubernetes**: ability to add node labels and taints
+
+## 1.12.0 (2024-07-08)
 
 ### Fix
 
@@ -20,7 +23,6 @@
 - **kubernetes_role**: remove not nfc_role_kubernetes_cluster_upgraded | default(true) | bool section
 - **kubernetes_role**: undo previous change
 - **kubernetes_role**: remove commented out section
-- **kubernetes_roles**: use inventory_hostname
 
 ## 1.11.0 (2024-06-27)
 
@@ -57,7 +59,6 @@
 - **nfc_kubernetes**: correct 'Create Required directories' when logic
 - **nfc_kubernetes**: only run tasks on master nodes
 - **nfc_kubernetes**: only run tasks on prime node
-- **nfc_kubernetes**: ensure correct node type selection for installation
 
 ### Refactor
 
@@ -72,22 +73,3 @@
 ### Fix
 
 - **nfc_kubernetes**: cast url var as list
-- **nfc_kubernetes**: correct url build to loop through all cpu arch
-
-## 1.8.0 (2024-05-02)
-
-### Feat
-
-- **nfc_kubernetes**: build url and on use cast as string
-
-## 1.7.2 (2024-04-25)
-
-### Fix
-
-- **nfc_kubernetes**: adjust some tasks to run during checkmode
-
-## 1.7.1 (2024-04-24)
-
-### Fix
-
-- add role readme
