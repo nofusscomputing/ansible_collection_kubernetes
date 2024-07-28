@@ -58,9 +58,27 @@
       kind: Node
       metadata:
         name: "{{ inventory_hostname }}"
-        {% if nfc_role_kubernetes_node_labels -%}
+        {% if
+          nfc_role_kubernetes_node_labels
+            and
+          not nfc_role_kubernetes_prime | bool
+        -%}
         labels:
           {{ nfc_role_kubernetes_node_labels | to_nice_yaml(indent=0) | indent(4) }}
+
+        { elif
+          nfc_role_kubernetes_prime | bool
+        %}
+
+        labels:
+          node-role.kubernetes.io/prime: "true"
+
+          {% if nfc_role_kubernetes_node_labels %}
+
+          {{ nfc_role_kubernetes_node_labels | to_nice_yaml(indent=0) | indent(4) }}
+
+          {% endif %}
+
         {%- endif +%}
       {% if nfc_role_kubernetes_node_taints -%}
       spec:
