@@ -46,6 +46,8 @@ nfc_role_kubernetes_install_kubevirt: false
 
 nfc_role_kubernetes_kubevirt_operator_replicas: 1
 
+nfc_role_kubernetes_node_labels: {}     # Optional, Dict. Node labels.
+nfc_role_kubernetes_node_taints: {}     # Optional, Dict. Node taints.
 # nfc_role_kubernetes_node_prime: ''    # Mandatory*, string. the inventory_hostname of the prime node. ONLY required for multi-node deployments
 
 nfc_role_kubernetes_oidc_enabled: false
