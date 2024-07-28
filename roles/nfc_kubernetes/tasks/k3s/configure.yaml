@@ -58,14 +58,32 @@
       kind: Node
       metadata:
         name: "{{ inventory_hostname }}"
-        {% if kubernetes_config.hosts[inventory_hostname].labels | default([]) | list | length > 0 -%}
+        {% if
+          nfc_role_kubernetes_node_labels
+            and
+          not nfc_role_kubernetes_prime | bool
+        -%}
         labels:
-          {{ kubernetes_config.hosts[inventory_hostname].labels | to_nice_yaml | indent(4) }}
+          {{ nfc_role_kubernetes_node_labels | to_nice_yaml(indent=0) | indent(4) }}
+
+        { elif
+          nfc_role_kubernetes_prime | bool
+        %}
+
+        labels:
+          node-role.kubernetes.io/prime: "true"
+
+          {% if nfc_role_kubernetes_node_labels %}
+
+          {{ nfc_role_kubernetes_node_labels | to_nice_yaml(indent=0) | indent(4) }}
+
+          {% endif %}
+
         {%- endif +%}
-      {% if kubernetes_config.hosts[inventory_hostname].taints | default([]) | list | length > 0 -%}
+      {% if nfc_role_kubernetes_node_taints -%}
       spec:
         taints:
-          {{ kubernetes_config.hosts[inventory_hostname].taints | to_nice_yaml(indent=0) | indent(4) }}
+          {{ nfc_role_kubernetes_node_taints | to_nice_yaml(indent=0) | indent(4) }}
       {% endif %}
     dest: /var/lib/rancher/k3s/server/manifests/node-manifest-{{ inventory_hostname }}.yaml
     owner: root
@@ -73,6 +91,6 @@
     mode: '700'
   delegate_to: "{{ nfc_role_kubernetes_node_prime }}"
   when:
-    kubernetes_config.hosts[inventory_hostname].labels | default([]) | list | length > 0
+    nfc_role_kubernetes_node_labels
       or
-    kubernetes_config.hosts[inventory_hostname].taints | default([]) | list | length > 0
+    nfc_role_kubernetes_node_taints
