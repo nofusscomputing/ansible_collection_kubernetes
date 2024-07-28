@@ -1,3 +1,9 @@
+## 1.13.1 (2024-07-28)
+
+### Fix
+
+- **nfc_kubernetes**: prime node to always be labeled prime
+
 ## 1.13.0 (2024-07-28)
 
 ### Feat
@@ -22,7 +28,6 @@
 - **kubernetes_role**: set server var -> "https://" + hostvars[nfc_role_kubernetes_node_prime].ansible_host + ":6443"
 - **kubernetes_role**: remove not nfc_role_kubernetes_cluster_upgraded | default(true) | bool section
 - **kubernetes_role**: undo previous change
-- **kubernetes_role**: remove commented out section
 
 ## 1.11.0 (2024-06-27)
 
@@ -57,8 +62,6 @@
 ### Fix
 
 - **nfc_kubernetes**: correct 'Create Required directories' when logic
-- **nfc_kubernetes**: only run tasks on master nodes
-- **nfc_kubernetes**: only run tasks on prime node
 
 ### Refactor
 
@@ -69,7 +72,3 @@
 ### Feat
 
 - **nfc_kubernetes**: add debug out to k3s download on failure
-
-### Fix
-
-- **nfc_kubernetes**: cast url var as list
