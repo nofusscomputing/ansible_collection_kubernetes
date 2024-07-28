@@ -94,3 +94,5 @@
     nfc_role_kubernetes_node_labels
       or
     nfc_role_kubernetes_node_taints
+      or
+    nfc_role_kubernetes_prime | bool
