@@ -66,7 +66,7 @@
         labels:
           {{ nfc_role_kubernetes_node_labels | to_nice_yaml(indent=0) | indent(4) }}
 
-        { elif
+        {% elif
           nfc_role_kubernetes_prime | bool
         %}
 
