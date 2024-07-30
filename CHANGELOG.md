@@ -1,3 +1,9 @@
+## 1.13.2 (2024-07-30)
+
+### Fix
+
+- **nfc_kubernetes**: correct logic for prime node to always be labeled prime
+
 ## 1.13.1 (2024-07-28)
 
 ### Fix
@@ -27,7 +33,6 @@
 - **kubernetes_role**: get prime hostname
 - **kubernetes_role**: set server var -> "https://" + hostvars[nfc_role_kubernetes_node_prime].ansible_host + ":6443"
 - **kubernetes_role**: remove not nfc_role_kubernetes_cluster_upgraded | default(true) | bool section
-- **kubernetes_role**: undo previous change
 
 ## 1.11.0 (2024-06-27)
 
@@ -55,17 +60,9 @@
 
 ## 1.10.0 (2024-05-03)
 
-### Feat
-
-- **nfc_kubernetes**: new variable 'nfc_role_kubernetes_node_prime' to denote the hostname of the prime node
-
 ### Fix
 
 - **nfc_kubernetes**: correct 'Create Required directories' when logic
-
-### Refactor
-
-- **nfc_kubernetes**: remove usage of prime node name over is_prime var
 
 ## 1.9.0 (2024-05-03)
 
