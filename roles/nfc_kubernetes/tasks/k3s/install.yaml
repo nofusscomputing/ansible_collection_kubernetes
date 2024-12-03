@@ -17,6 +17,8 @@
   register: file_calico_yaml_metadata
   when: >
     nfc_role_kubernetes_prime | bool
+      and
+    nfc_role_kubernetes_install_cni | default(false) | bool
 
 
 - name: Check for calico Operator deployment manifest
@@ -25,6 +27,8 @@
   register: file_calico_operator_yaml_metadata
   when: >
     nfc_role_kubernetes_prime | bool
+      and
+    nfc_role_kubernetes_install_cni | default(false) | bool
 
 
 - name: Install dependent packages
@@ -523,6 +527,8 @@
           {{
             nfc_role_kubernetes_prime | bool
               and
+            nfc_role_kubernetes_install_cni | default(false) | bool
+              and
             (
               (
                 not file_calico_operator_yaml_metadata.stat.exists
@@ -605,6 +611,8 @@
     nfc_role_kubernetes_prime | bool
       and
     not nfc_role_kubernetes_cluster_upgraded | default(false) | bool
+      and
+    nfc_role_kubernetes_install_cni | default(false) | bool
 
 
 - name: Install MetalLB Operator
@@ -723,6 +731,8 @@
   failed_when: false    # New cluster will fail
   when: >
     nfc_role_kubernetes_prime | bool
+      and
+    nfc_role_kubernetes_install_cni | default(false) | bool
       and
     kubernetes_config.cluster.networking.encrypt | default(false) | bool
       and
