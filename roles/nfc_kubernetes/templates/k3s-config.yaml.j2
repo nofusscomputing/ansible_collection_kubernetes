@@ -100,8 +100,7 @@
         })
       -%}
 
-
-    {%- endif -%} 
+    {%- endif -%}
 
     {%- if (
       not nfc_kubernetes_enable_metallb | default(false)
@@ -116,6 +115,20 @@
     {%- endif -%}
 
 
+    {%- if (
+      nfc_role_kubernetes_install_helm | default(false)
+    ) -%}
+
+      {%- set disable = servers_config.disable + [ "helm-controller" ] -%}
+
+      {%
+      set servers_config = servers_config | combine({
+          "disable": disable 
+        })
+      -%}
+
+
+    {%- endif -%} 
 {# Combine Remaining Server Objects #}
 
 {%

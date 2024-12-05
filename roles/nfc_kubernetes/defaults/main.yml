@@ -38,6 +38,8 @@ nfc_role_kubernetes_configure_firewall: true
 
 nfc_role_kubernetes_etcd_enabled: false
 
+nfc_role_kubernetes_install_cni: false
+
 nfc_role_kubernetes_install_olm: false
 
 nfc_role_kubernetes_install_helm: true
